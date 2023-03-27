@@ -1,5 +1,6 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
+import '../App.css'
 
 function Navigation() {
     return (
@@ -11,7 +12,6 @@ function Navigation() {
                 <li>
                     <NavLink to='/signup'>Sign-up</NavLink>
                 </li>
-
                 <li>
                     <NavLink to='/signin'>Sign-In</NavLink>
                 </li>
