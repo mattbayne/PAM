@@ -15,6 +15,12 @@ function Navigation() {
                 <li>
                     <NavLink to='/signin'>Sign-In</NavLink>
                 </li>
+                <li>
+                    <NavLink to='/private'>Private</NavLink>
+                </li>
+                <li>
+                    <NavLink to='/changepassword'>Change Password</NavLink>
+                </li>
             </ul>
         </nav>
     );
