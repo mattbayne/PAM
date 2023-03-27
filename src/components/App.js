@@ -18,10 +18,10 @@ function App() {
           </header>
         </div>
         <Routes>
-          <Route exact path='/' component={Landing} />
-          <Route path='/signup' component={SignUp} />
-          <Route path='/signin' component={SignIn} />
-          <Route path='/logout' component={SignOut} />
+          <Route exact path='/' element={<Landing/>} />
+          <Route path='/signup' element={<SignUp/>} />
+          <Route path='/signin' element={<SignIn/>} />
+          <Route path='/signout' element={<SignOut/>} />
         </Routes>
       </Router>
   );
