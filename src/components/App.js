@@ -8,23 +8,31 @@ import Landing from './Landing';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import SignOut from './SignOut';
+import {AuthProvider} from "../firebase/Auth";
+import ChangePassword from "./ChangePassword";
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
-  return (
-      <Router>
-        <div className="App">
-          <header className="App-header">
-              <Navigation/>
-          </header>
-        </div>
-        <Routes>
-          <Route exact path='/' element={<Landing/>} />
-          <Route path='/signup' element={<SignUp/>} />
-          <Route path='/signin' element={<SignIn/>} />
-          <Route path='/signout' element={<SignOut/>} />
-        </Routes>
-      </Router>
-  );
+    return (
+        <AuthProvider>
+            <Router>
+                <div className="App">
+                    <header className="App-header">
+                        <Navigation/>
+                    </header>
+                </div>
+                <Routes>
+                    <Route exact path='/' component={Landing} />
+                    <Route path='/signup' component={SignUp} />
+                    <Route path='/signin' component={SignIn} />
+                    <Route path='/signout' component={SignOut} />
+                    <Route path='/changepassword' component={PrivateRoute}>
+                        <Route path='/changepassword' component={ChangePassword} />
+                    </Route>
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
 }
 
 export default App;
