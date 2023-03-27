@@ -2,12 +2,12 @@ import React from 'react';
 
 import '../App.css'
 
-function SignUp() {
+function SignIn() {
     return (
         <div>
-            <h2>Sign up page</h2>
+            <h2>Sign in page</h2>
         </div>
     );
 }
 
-export default SignUp;
+export default SignIn;
