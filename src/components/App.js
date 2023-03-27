@@ -22,13 +22,11 @@ function App() {
                     </header>
                 </div>
                 <Routes>
-                    <Route exact path='/' component={Landing} />
-                    <Route path='/signup' component={SignUp} />
-                    <Route path='/signin' component={SignIn} />
-                    <Route path='/signout' component={SignOut} />
-                    <Route path='/changepassword' component={PrivateRoute}>
-                        <Route path='/changepassword' component={ChangePassword} />
-                    </Route>
+                    <Route exact path='/' element={<Landing/>} />
+                    <Route path='/signup' element={<SignUp/>} />
+                    <Route path='/signin' element={<SignIn/>} />
+                    <Route path='/signout' element={<SignOut/>} />
+                    <Route path='/changepassword' element={<PrivateRoute path='/changepassword' element={<ChangePassword/>} />} />
                 </Routes>
             </Router>
         </AuthProvider>
