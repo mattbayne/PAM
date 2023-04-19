@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css'
 import ChangePassword from './ChangePassword'
-import SignOutButton from "./SignOut";
+import SignOutButton from "./LogOut";
 
 function Account() {
     return (
