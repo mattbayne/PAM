@@ -121,12 +121,14 @@ function ResponsiveAppBar() {
                     >
                         Personalized Assistant & Manager
                     </Typography>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                    <NavLink to='/' style={{color: 'inherit'}}>
+                        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                    </NavLink>
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href=""
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
