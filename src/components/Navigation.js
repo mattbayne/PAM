@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import React, {useContext} from 'react';
 // import {NavLink} from 'react-router-dom';
 // import {AuthContext} from "../firebase/Auth";
@@ -201,4 +202,5 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
+
 export default ResponsiveAppBar;
