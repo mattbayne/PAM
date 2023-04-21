@@ -1,11 +1,16 @@
 import React from 'react';
 import {doSignOut} from "../firebase/FirebaseFunctions";
 import '../App.css'
+import {Navigate} from "react-router-dom";
 
-const SignOutButton = () => {
-    return (
-        <button type='button' onClick={doSignOut}>Sign Out</button>
-    );
+function LogOutButton() {
+    return <button type='button' onClick={doSignOut}>Sign Out</button>
 }
 
-export default SignOutButton;
+const LogOut = () => {
+    doSignOut()
+    return <Navigate to='/login' />
+}
+
+export {LogOutButton};
+export default LogOut;

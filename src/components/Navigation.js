@@ -1,7 +1,7 @@
 // import React, {useContext} from 'react';
 // import {NavLink} from 'react-router-dom';
 // import {AuthContext} from "../firebase/Auth";
-// import SignOutButton from "./SignOut";
+// import SignOutButton from "./LogOut";
 // import '../App.css'
 //
 // const Navigation = ()=>{
@@ -177,6 +177,7 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                                     {setting === "Login" && (
@@ -194,6 +195,21 @@ function ResponsiveAppBar() {
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
+                                    {setting === "Profile" && (
+                                        <NavLink to="/profile">
+                                            <Typography textAlign="center">{setting}</Typography>
+                                        </NavLink>
+                                    )}
+                                    {setting === "Account" && (
+                                        <NavLink to="/account">
+                                            <Typography textAlign="center">{setting}</Typography>
+                                        </NavLink>
+                                    )}
+                                    {setting === "Dashboard" && (
+                                        <NavLink to="/">
+                                            <Typography textAlign="center">{setting}</Typography>
+                                        </NavLink>
+                                    )}
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -203,5 +219,4 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
-
 export default ResponsiveAppBar;

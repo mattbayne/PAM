@@ -1,11 +1,10 @@
 import React from 'react';
-import SignOutButton from "./LogOut";
 import '../App.css'
 
 function ChangePassword() {
     return (
         <div>
-            <h2>Welcome to PAM</h2>
+            <h2>Change password logic goes here</h2>
         </div>
     );
 }

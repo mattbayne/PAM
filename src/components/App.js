@@ -4,15 +4,16 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import '../App.css';
 
 import Navigation from './Navigation';
-import Landing from './Landing';
+// import Landing from './Landing';
 import SignUp from './SignUp';
-import Login from './Login';
-import SignOut from './LogOut';
-import {AuthProvider} from "../firebase/Auth";
+import {AuthenticatedRoute, AuthProvider, UnauthenticatedRoute} from "../firebase/Auth";
 import ChangePassword from "./ChangePassword";
 import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./Dashboard/Dashboard";
+
+import Login from "./Login";
 import LogOut from "./LogOut";
+import Account from "./Account";
 
 function App() {
     return (
@@ -24,11 +25,27 @@ function App() {
                     </header>
                 </div>
                 <Routes>
-                    <Route exact path='/' element={<Dashboard/>} />
-                    <Route path='/signup' element={<SignUp/>} />
-                    <Route path='/login' element={<Login/>} />
-                    {/*<Route path='/logout' element={<LogOut/>} />*/}
-                    <Route path='/changepassword' element={<PrivateRoute path='/changepassword' element={<ChangePassword/>} />} />
+                    <Route exact path='/' element={<AuthenticatedRoute />}>
+                        <Route exact path='/' element={<Dashboard />} />
+                    </Route>
+
+                    <Route exact path='/account' element={<AuthenticatedRoute />}>
+                        <Route exact path='/account' element={<Account />} />
+                    </Route>
+
+                    <Route exact path='/changepassword' element={<AuthenticatedRoute />}>
+                        <Route exact path='/changepassword' element={<ChangePassword />} />
+                    </Route>
+
+                    <Route exact path='/login' element={<UnauthenticatedRoute />}>
+                        <Route path='/login' element={<Login />} />
+                    </Route>
+
+                    <Route exact path='/signup' element={<UnauthenticatedRoute />}>
+                        <Route path='/signup' element={<SignUp />} />
+                    </Route>
+
+                    {<Route path='/logout' element={<LogOut />} />}
                 </Routes>
             </Router>
         </AuthProvider>

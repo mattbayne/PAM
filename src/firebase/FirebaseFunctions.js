@@ -1,6 +1,7 @@
 import firebase from 'firebase/compat/app';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
+    console.log(`creating user: `, email, password, displayName);
     await firebase.auth().createUserWithEmailAndPassword(email, password);
     await firebase.auth().currentUser.updateProfile({displayName: displayName});
 }
