@@ -13,7 +13,7 @@ import ChangePassword from "./ChangePassword";
 import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./Dashboard/Dashboard";
 import LogOut from "./LogOut";
-
+import ConvertHtmlToPdf from "./wkhtmltopdf"
 function App() {
     return (
         <AuthProvider>
@@ -27,6 +27,7 @@ function App() {
                     <Route exact path='/' element={<Dashboard/>} />
                     <Route path='/signup' element={<SignUp/>} />
                     <Route path='/login' element={<Login/>} />
+                    <Route path='/wkhtmltopdf' element={<ConvertHtmlToPdf/>} />
                     {/*<Route path='/logout' element={<LogOut/>} />*/}
                     <Route path='/changepassword' element={<PrivateRoute path='/changepassword' element={<ChangePassword/>} />} />
                 </Routes>
