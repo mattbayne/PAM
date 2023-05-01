@@ -7,31 +7,35 @@ import EmailIcon from '@mui/icons-material/Email';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 
-export const mainListItems = (
-  <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon>
-        <EmailIcon />
-      </ListItemIcon>
-      <ListItemText primary="Generate Emails" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <CalendarMonthIcon />
-      </ListItemIcon>
-      <ListItemText primary="Add Events to Calendar" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <ListAltIcon />
-      </ListItemIcon>
-      <ListItemText primary="Create an Itinerary for the Day" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <EditIcon />
-      </ListItemIcon>
-      <ListItemText primary="Edit Documents" />
-    </ListItemButton>
-  </React.Fragment>
+const MainListItems = (props) => (
+    <React.Fragment>
+        <ListItemButton onClick={() => props.onSelect('generateEmails')}>
+            <ListItemIcon>
+                <EmailIcon />
+            </ListItemIcon>
+            <ListItemText primary="Generate Emails" />
+        </ListItemButton>
+        <ListItemButton>
+            <ListItemIcon>
+                <CalendarMonthIcon />
+            </ListItemIcon>
+            <ListItemText primary="Add Events to Calendar" />
+        </ListItemButton>
+        <ListItemButton>
+            <ListItemIcon>
+                <ListAltIcon />
+            </ListItemIcon>
+            <ListItemText primary="Create an Itinerary for the Day" />
+        </ListItemButton>
+        <ListItemButton>
+            <ListItemIcon>
+                <EditIcon />
+            </ListItemIcon>
+            <ListItemText primary="Edit Documents" />
+        </ListItemButton>
+    </React.Fragment>
 );
+
+export default MainListItems;
+
+
