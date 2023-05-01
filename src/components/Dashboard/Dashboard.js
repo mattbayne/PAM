@@ -14,6 +14,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {ChevronRight} from "@mui/icons-material";
 import MainListItems from "./listItems";
 import GenerateEmails from "../Features/GenerateEmails";
+import Calendar from "../Features/Calendar";
+import Itinerary from "../Features/Itinerary";
+import EditDocs from "../Features/EditDocs";
 
 
 
@@ -115,6 +118,9 @@ function DashboardContent() {
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
+          {selectedFunctionality === 'calendar' && <Calendar />}
+          {selectedFunctionality === 'itinerary' && <Itinerary />}
+          {selectedFunctionality === 'editDocs' && <EditDocs />}
           {/* Add other functionalities here */}
         </Box>
       </Box>

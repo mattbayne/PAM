@@ -15,19 +15,19 @@ const MainListItems = (props) => (
             </ListItemIcon>
             <ListItemText primary="Generate Emails" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => props.onSelect('calendar')}>
             <ListItemIcon>
                 <CalendarMonthIcon />
             </ListItemIcon>
             <ListItemText primary="Add Events to Calendar" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => props.onSelect('itinerary')}>
             <ListItemIcon>
                 <ListAltIcon />
             </ListItemIcon>
             <ListItemText primary="Create an Itinerary for the Day" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => props.onSelect('editDocs')}>
             <ListItemIcon>
                 <EditIcon />
             </ListItemIcon>
