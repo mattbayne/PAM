@@ -46,6 +46,7 @@ app.post("/convert-to-pdf", (req, res) => {
     });
 });
 
+
 app.post("/api/generate-email", async (req, res) => {
     const { purpose } = req.body;
     console.log('purpose', purpose);
@@ -68,6 +69,7 @@ app.post("/api/generate-email", async (req, res) => {
         res.status(500).json({ success: false, message: "Email generation failed." });
     }
 });
+
 
 app.post("/api/send-email", async (req, res) => {
     const { email, subject, body } = req.body;
@@ -93,6 +95,7 @@ app.post("/api/send-email", async (req, res) => {
         res.status(500).json({ success: false, message: "Email sending failed." });
     }
 });
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
