@@ -25,19 +25,19 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 app.post("/api/generate-email", async (req, res) => {
     const { purpose } = req.body;
-    console.log(process.env.OPENAI_KEY);
+    console.log('purpose', purpose);
 
     try {
         // Generate email content using OpenAI API
         const openaiResponse = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}` }],
+            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Make sure the first line in your response is the Subject.` }],
         });
 
 
         const generatedEmail = openaiResponse.data.choices[0].message.content.trim();
 
-        console.log(generatedEmail);
+        // console.log(generatedEmail);
 
         res.status(200).json({ success: true, emailContent: generatedEmail });
     } catch (error) {
