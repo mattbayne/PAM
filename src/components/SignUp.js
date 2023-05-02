@@ -3,8 +3,8 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+//  import FormControlLabel from '@mui/material/FormControlLabel';
+//  import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,6 +12,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions';
+import {AuthContext} from "../firebase/Auth";
+import {useContext} from "react";
+import {Navigate} from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -29,6 +34,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const {currentUser} = useContext(AuthContext);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -36,7 +42,12 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    doCreateUserWithEmailAndPassword(data.get('email'), data.get('password'), data.get('displayName'))
   };
+
+  if (currentUser) {
+    return <Navigate to='/' />
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,6 +88,16 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                    required
+                    fullWidth
+                    id="displayName"
+                    label="Display Name"
+                    name="displayName"
+                    autoComplete="username"
                 />
               </Grid>
               <Grid item xs={12}>

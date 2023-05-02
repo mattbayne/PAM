@@ -12,7 +12,12 @@ import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {ChevronRight} from "@mui/icons-material";
-import {mainListItems, secondaryListItems} from './listItems';
+import MainListItems from "./listItems";
+import GenerateEmails from "../Features/GenerateEmails";
+import Calendar from "../Features/Calendar";
+import Itinerary from "../Features/Itinerary";
+import EditDocs from "../Features/EditDocs";
+
 
 
 function Copyright(props) {
@@ -79,8 +84,13 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
+  const [selectedFunctionality, setSelectedFunctionality] = React.useState('');
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleFunctionalitySelect = (functionality) => {
+    setSelectedFunctionality(functionality);
   };
 
   return (
@@ -102,10 +112,17 @@ function DashboardContent() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <MainListItems onSelect={handleFunctionalitySelect} />
             {/*<Divider sx={{ my: 1 }} />*/}
           </List>
         </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
+          {selectedFunctionality === 'calendar' && <Calendar />}
+          {selectedFunctionality === 'itinerary' && <Itinerary />}
+          {selectedFunctionality === 'editDocs' && <EditDocs />}
+          {/* Add other functionalities here */}
+        </Box>
       </Box>
     </ThemeProvider>
   );
