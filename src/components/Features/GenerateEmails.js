@@ -1,43 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { Configuration, OpenAIApi } from 'openai';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-
-
-const openai = new OpenAIApi(
-    new Configuration({
-        apiKey: process.env.REACT_APP_OPENAI_KEY,
-    })
-);
-
-async function getResults(prompt) {
-    let completion;
-    try {
-        completion = await openai.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: prompt }],
-        });
-    } catch (e) {
-        console.log(e.response.data);
-    }
-
-    return completion;
-}
+import axios from 'axios';
 
 const GenerateEmails = () => {
-    const [inputValue, setInputValue] = useState('');
+    const [email, setEmail] = useState('');
+    const [purpose, setPurpose] = useState('');
     const [response, setResponse] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
+    const convertNewLinesToBreaks = (text) => {
+        return text.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+                {line}
+                <br />
+            </React.Fragment>
+        ));
+    };
 
-    const fetchData = async () => {
+    const generateEmail = async () => {
         setLoading(true);
-        const res = await getResults(inputValue);
-        setResponse(res.data.choices[0].message.content);
+        setError('');
+        try {
+            const {data: {emailContent}} = await axios.post('http://localhost:4000/api/generate-email', { purpose });
+            console.log(emailContent);
+            setResponse(emailContent);
+        } catch (error) {
+            setError('Failed to generate email.');
+        }
         setLoading(false);
+    };
+
+    const sendEmail = async () => {
+        setError('');
+        try {
+            const arr = response.split('\n');
+            const firstEmptyLineIndex = arr.findIndex(line => line.trim() === '');
+
+            if (firstEmptyLineIndex !== -1) {
+                arr.splice(firstEmptyLineIndex, 1);
+            }
+
+            const [subject, ...bodyLines] = arr;
+            const body = bodyLines.join('\n');
+
+            // console.log('body', body);
+
+            await axios.post('http://localhost:4000/api/send-email', { email, subject, body});
+            alert('Email sent!');
+        } catch (error) {
+            setError('Failed to send email.');
+        }
     };
 
     return (
@@ -63,18 +80,25 @@ const GenerateEmails = () => {
                 </Typography>
                 <Box component="form" width={1}>
                     <TextField
-                        label="Enter your prompt"
+                        label="Recipient Email"
                         fullWidth
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        sx={{ mb: 2 }}
+                    />
+                    <TextField
+                        label="Email Purpose"
+                        fullWidth
+                        value={purpose}
+                        onChange={(e) => setPurpose(e.target.value)}
                     />
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={fetchData}
+                        onClick={generateEmail}
                         sx={{ mt: 2 }}
                     >
-                        Submit
+                        Generate Email Draft
                     </Button>
                 </Box>
             </Box>
@@ -87,15 +111,41 @@ const GenerateEmails = () => {
                     flexGrow: 1,
                 }}
             >
-                <Typography variant="subtitle1">
-                    Response from ChatGPT:
-                </Typography>
+                {/*<Typography variant="subtitle1">Response from ChatGPT:</Typography>*/}
                 {loading ? (
-                    <CircularProgress/>
-                ) : (
-                    <Typography variant="body1" mt={2}>
-                        {response}
+                    <>
+                        <CircularProgress />
+                        <Typography variant="body2" mt={2}>
+                            Generating email...
+                        </Typography>
+                    </>
+                ) : response && (
+                    <TextField
+                        multiline
+                        rows={15}
+                        rowsMax={20}
+                        value={response}
+                        onChange={(e) => setResponse(e.target.value)}
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                        InputProps={{ readOnly: !response }}
+                    />
+                )}
+                {error && (
+                    <Typography variant="body2" color="error" mt={2}>
+                        {error}
                     </Typography>
+                )}
+                {response && (
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={sendEmail}
+                        sx={{ mt: 2 }}
+                    >
+                        Send Email
+                    </Button>
                 )}
             </Box>
         </Box>
