@@ -3,11 +3,14 @@ const app = express();
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
+const wkhtmltopdf = require("wkhtmltopdf");
+
 require('dotenv').config();
 
-
+app.use(express.json());  // do we need both of these?
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -22,6 +25,27 @@ const openai = new OpenAIApi(
 
 // // Configure SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_KEY);
+
+app.post("/convert-to-pdf", (req, res) => {
+    const htmlString = req.body.html; // Get the HTML string from the request body
+
+    // Convert the HTML string to a PDF
+    const pdfStream = wkhtmltopdf(htmlString, { pageSize: "letter" });
+
+    // Set the response headers
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=output.pdf");
+
+    // Pipe the PDF stream directly to the response
+    pdfStream.pipe(res);
+
+    // Handle errors on the PDF stream
+    pdfStream.on("error", (err) => {
+        console.error("Error converting HTML to PDF:", err);
+        res.status(500).json({ error: "Failed to create PDF" });
+    });
+});
+
 
 app.post("/api/generate-email", async (req, res) => {
     const { purpose } = req.body;
@@ -45,6 +69,7 @@ app.post("/api/generate-email", async (req, res) => {
         res.status(500).json({ success: false, message: "Email generation failed." });
     }
 });
+
 
 app.post("/api/send-email", async (req, res) => {
     const { email, subject, body } = req.body;
@@ -71,7 +96,9 @@ app.post("/api/send-email", async (req, res) => {
     }
 });
 
-app.listen(4000, () => {
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
     console.log("We've now got a server!");
-    console.log("Your routes will be running on http://localhost:4000");
+    console.log(`Your routes will be running on http://localhost:${PORT}`);
 });

@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const MainListItems = (props) => (
     <React.Fragment>
@@ -32,6 +33,12 @@ const MainListItems = (props) => (
                 <EditIcon />
             </ListItemIcon>
             <ListItemText primary="Edit Documents" />
+        </ListItemButton>
+        <ListItemButton onClick={() => props.onSelect('htmlToPdf')}>
+            <PictureAsPdfIcon>
+                <ListAltIcon />
+            </PictureAsPdfIcon>
+            <ListItemText primary="HTML to PDF" />
         </ListItemButton>
     </React.Fragment>
 );

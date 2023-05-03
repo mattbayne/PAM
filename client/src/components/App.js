@@ -8,11 +8,12 @@ import Navigation from './Navigation';
 import SignUp from './SignUp';
 import {AuthenticatedRoute, AuthProvider, UnauthenticatedRoute} from "../firebase/Auth";
 import ChangePassword from "./ChangePassword";
-import PrivateRoute from "./PrivateRoute";
 import Dashboard from "./Dashboard/Dashboard";
 
 import Login from "./Login";
 import LogOut from "./LogOut";
+import ConvertHtmlToPdf from "./wkhtmltopdf"
+
 import Account from "./Account";
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
                     <Route exact path='/changepassword' element={<AuthenticatedRoute />}>
                         <Route exact path='/changepassword' element={<ChangePassword />} />
                     </Route>
+
+                    <Route path='/wkhtmltopdf' element={<ConvertHtmlToPdf/>} />
 
                     <Route exact path='/login' element={<UnauthenticatedRoute />}>
                         <Route path='/login' element={<Login />} />
