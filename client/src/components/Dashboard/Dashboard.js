@@ -17,6 +17,7 @@ import GenerateEmails from "../Features/GenerateEmails";
 import Calendar from "../Features/Calendar";
 import Itinerary from "../Features/Itinerary";
 import EditDocs from "../Features/EditDocs";
+import ConvertHtmlToPdf from "../wkhtmltopdf";
 
 
 
@@ -121,6 +122,7 @@ function DashboardContent() {
           {selectedFunctionality === 'calendar' && <Calendar />}
           {selectedFunctionality === 'itinerary' && <Itinerary />}
           {selectedFunctionality === 'editDocs' && <EditDocs />}
+          {selectedFunctionality === 'htmlToPdf' && <ConvertHtmlToPdf />}
           {/* Add other functionalities here */}
         </Box>
       </Box>

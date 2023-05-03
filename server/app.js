@@ -100,5 +100,5 @@ app.post("/api/send-email", async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log("We've now got a server!");
-    console.log("Your routes will be running on http://localhost:4000");
+    console.log(`Your routes will be running on http://localhost:${PORT}`);
 });

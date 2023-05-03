@@ -34,7 +34,7 @@ const MainListItems = (props) => (
             </ListItemIcon>
             <ListItemText primary="Edit Documents" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => props.onSelect('htmlToPdf')}>
             <PictureAsPdfIcon>
                 <ListAltIcon />
             </PictureAsPdfIcon>
