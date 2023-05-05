@@ -36,6 +36,7 @@ const theme = createTheme();
 export default function Login() {
     const {currentUser} = useContext(AuthContext);
     const [loggingIn, setLoggingIn] = useState(false);
+    const [error, setError] = useState(null)
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -43,11 +44,13 @@ export default function Login() {
             email: data.get('email'),
             password: data.get('password'),
         });
-        doSignInWithEmailAndPassword(data.get('email'), data.get('password')).catch((reason)=>{
-            console.log(`failed to log in: `, reason)
-            setLoggingIn(false)
-        })
-        setLoggingIn(true);
+        doSignInWithEmailAndPassword(data.get('email'), data.get('password')).then(
+            ()=>setLoggingIn(true),
+            (reason)=>{
+                console.log(`failed to log in: `, reason)
+                setError("invalid username or password, please try again")
+                setLoggingIn(false)
+            })
     };
 
     if (currentUser) {
@@ -73,9 +76,10 @@ export default function Login() {
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
-                    <Typography component="h1" variant="h5">
+                    <Typography component="h1" variant="body1">
                         Log in
                     </Typography>
+                    {(error !== null) ? <Typography component="h2" color="red"><i>{error}</i></Typography> : "" }
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
