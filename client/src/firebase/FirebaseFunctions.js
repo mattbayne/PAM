@@ -10,7 +10,6 @@ async function doChangePassword(email, oldPassword, newPassword) {
     let credential = firebase.auth.EmailAuthProvider.credential(email, oldPassword);
     await firebase.auth().currentUser.reauthenticateWithCredential(credential);
     await firebase.auth().currentUser.updatePassword(newPassword);
-    await doSignOut();
 }
 
 async function doSignInWithEmailAndPassword(email, password) {
