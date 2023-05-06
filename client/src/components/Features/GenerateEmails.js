@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {AuthContext} from "../../firebase/Auth";
 
 const GenerateEmails = () => {
     const [email, setEmail] = useState('');
@@ -15,6 +16,9 @@ const GenerateEmails = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [open, setOpen] = useState(false);
+    const {currentUser, avatar, setAvatar} = useContext(AuthContext);
+    const user = currentUser['_delegate'];
+    const {displayName} = user;
 
     const convertNewLinesToBreaks = (text) => {
         return text.split('\n').map((line, index) => (
@@ -49,7 +53,7 @@ const GenerateEmails = () => {
         setLoading(true);
         setError('');
         try {
-            const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose, recipientName: name });
+            const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose, recipientName: name, displayName });
             console.log(emailContent);
             setResponse(emailContent);
         } catch (error) {

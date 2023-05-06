@@ -49,14 +49,16 @@ app.post("/convert-to-pdf", (req, res) => {
 
 
 app.post("/api/generate-email", async (req, res) => {
-    const { purpose, recipientName } = req.body;
+    const { purpose, recipientName, displayName } = req.body;
     console.log('purpose', purpose);
+    // console.log(displayName);
+
 
     try {
         // Generate email content using OpenAI API
         const openaiResponse = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}.`}],
+            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}. The signature name will be '${displayName}'`}],
         });
 
 
