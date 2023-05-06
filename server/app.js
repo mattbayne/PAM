@@ -7,6 +7,7 @@ const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
+const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
 
 require('dotenv').config();
 
@@ -95,6 +96,55 @@ app.post("/api/send-email", async (req, res) => {
         res.status(500).json({ success: false, message: "Email sending failed." });
     }
 });
+
+
+app.get("/user/:email", async (req, res) => {
+    const {email} = req.params;
+    console.log(`getting data for email: `, email)
+
+    let userData;
+    try {
+        userData = await getUserProfile(email);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({error: 'failed to get user information'})
+        return
+    }
+    if (userData === null) {
+        console.log("user does not exist in mongo, initializing...")
+        userData = await createUserProfile(email)
+    }
+    console.log(`found: `, userData)
+    res.json(userData)
+})
+
+app.post("/user/:email/picture", async (req, res) => {
+    const {email} = req.params;
+    const { profileImage } = req.body
+
+    if (profileImage === null) {
+        res.status(400).json({error: "a profile image url must be provided"})
+    }
+
+
+    let userData;
+    try {
+        userData = await getUserProfile(email);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({error: 'failed to get user information'})
+        return
+    }
+    if (userData === null) {
+        console.log("user does not exist in mongo, initializing w/ profile image")
+        userData = await createUserProfile(email, {profileImage: profileImage})
+    } else {
+        console.log("updating existing user profile")
+        userData = await updateUserProfilePicture(email, profileImage)
+    }
+    console.log(`found: `, userData)
+    res.json(userData)
+})
 
 
 const PORT = process.env.PORT || 3001;

@@ -77,7 +77,7 @@ function ResponsiveAppBar() {
 
     const { currentUser } = useContext(AuthContext);
     const settings = currentUser
-        ? ["Profile", "Account", "Dashboard", "Logout"]
+        ? ["Account", "Dashboard", "Logout"]
         : ["Login", "Signup"];
 
 
@@ -192,11 +192,6 @@ function ResponsiveAppBar() {
                                     )}
                                     {setting === "Logout" && (
                                         <NavLink to="/logout">
-                                            <Typography textAlign="center">{setting}</Typography>
-                                        </NavLink>
-                                    )}
-                                    {setting === "Profile" && (
-                                        <NavLink to="/profile">
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}

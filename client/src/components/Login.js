@@ -40,15 +40,20 @@ export default function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
         doSignInWithEmailAndPassword(data.get('email'), data.get('password')).then(
             ()=>setLoggingIn(true),
             (reason)=>{
-                console.log(`failed to log in: `, reason)
-                setError("invalid username or password, please try again")
+                switch(reason['code']) {
+                    case "auth/wrong-password":
+                        setError("invalid username or password, please try again.");
+                        break;
+                    case "auth/too-many-requests":
+                        setError("too many failed attempts, please try again later.");
+                        break;
+                    default:
+                        setError(`unable to login due to unknown error, please contact an administrator: ${reason['code']}`)
+                        break
+                }
                 setLoggingIn(false)
             })
     };
