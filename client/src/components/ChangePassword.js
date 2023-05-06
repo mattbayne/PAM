@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import '../App.css'
 import Button from "@mui/material/Button";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import firebaseApp from "../firebase/Firebase";
 import firebase from 'firebase/compat/app';
 import Link from "@mui/material/Link";
 import {doChangePassword} from "../firebase/FirebaseFunctions";
+import {AuthContext} from "../firebase/Auth";
 
 // function ChangePassword() {
 //     return (
@@ -18,17 +18,16 @@ import {doChangePassword} from "../firebase/FirebaseFunctions";
 // }
 
 function ChangePassword(props) {
-    const {onSubmit} = props;
     const [open, setOpen] = useState(false);
     const [currPass, setCurrPass] = useState('');
     const [pass1, setPass1] = useState('');
     const [pass2, setPass2] = useState('');
     const [error, setError] = useState(null)
     const [provider, setProvider] = useState(null)
-    const user = firebaseApp.auth().currentUser;
+    const {currentUser} = useContext(AuthContext);
 
     useEffect(()=>{
-        setProvider(user.providerData[0].providerId)
+        setProvider(currentUser.providerData[0].providerId)
     }, [provider])
 
     async function validateCurrentPassword() {
@@ -36,7 +35,7 @@ function ChangePassword(props) {
             firebase.auth().currentUser.email,
             currPass
         );
-        await user.reauthenticateWithCredential(credential);
+        await currentUser.reauthenticateWithCredential(credential);
     }
 
     const handleClickOpen = () => {
@@ -69,7 +68,7 @@ function ChangePassword(props) {
             return
         }
         try {
-            await doChangePassword(user.email, currPass, pass1)
+            await doChangePassword(currentUser.email, currPass, pass1)
         } catch (e) {
             setError(e)
             console.log(e)

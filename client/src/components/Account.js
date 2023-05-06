@@ -30,10 +30,15 @@ function FormDialog(props) {
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleSubmit = () => {
         onSubmit(url)
         setOpen(false);
     };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
 
     return (
         <div>
@@ -60,7 +65,7 @@ function FormDialog(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Submit</Button>
+                    <Button onClick={handleSubmit}>Submit</Button>
                 </DialogActions>
             </Dialog>
         </div>
