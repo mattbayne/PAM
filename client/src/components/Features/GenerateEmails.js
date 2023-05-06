@@ -5,13 +5,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 
 const GenerateEmails = () => {
     const [email, setEmail] = useState('');
     const [purpose, setPurpose] = useState('');
+    const [name, setName] = useState('');
     const [response, setResponse] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [open, setOpen] = useState(false);
 
     const convertNewLinesToBreaks = (text) => {
         return text.split('\n').map((line, index) => (
@@ -22,11 +25,31 @@ const GenerateEmails = () => {
         ));
     };
 
+    const resetForm = () => {
+        setEmail('');
+        setPurpose('');
+        setResponse('');
+        setName('');
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     const generateEmail = async () => {
+        if (!email.trim() || !purpose.trim()) {
+            setError('Recipient email, recipient name, and email purpose cannot be empty.');
+            return;
+        }
+
         setLoading(true);
         setError('');
         try {
-            const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose });
+            const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose, recipientName: name });
             console.log(emailContent);
             setResponse(emailContent);
         } catch (error) {
@@ -36,6 +59,7 @@ const GenerateEmails = () => {
     };
 
     const sendEmail = async () => {
+        setOpen(false);
         setError('');
         try {
             const arr = response.split('\n');
@@ -52,6 +76,7 @@ const GenerateEmails = () => {
 
             await axios.post('http://localhost:3001/api/send-email', { email, subject, body});
             alert('Email sent!');
+            resetForm();
         } catch (error) {
             setError('Failed to send email.');
         }
@@ -85,12 +110,22 @@ const GenerateEmails = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         sx={{ mb: 2 }}
+                        placeholder="i.e., someone@gmail.com"
+                    />
+                    <TextField
+                        label="Recipient Name"
+                        fullWidth
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        sx={{ mb: 2 }}
+                        placeholder="Dear (Recipient Name)"
                     />
                     <TextField
                         label="Email Purpose"
                         fullWidth
                         value={purpose}
                         onChange={(e) => setPurpose(e.target.value)}
+                        placeholder="i.e., Schedule Meeting with Academic Advisor"
                     />
                     <Button
                         variant="contained"
@@ -138,16 +173,46 @@ const GenerateEmails = () => {
                     </Typography>
                 )}
                 {response && (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={sendEmail}
-                        sx={{ mt: 2 }}
-                    >
-                        Send Email
-                    </Button>
+                    <>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleClickOpen}
+                            sx={{ mt: 2 }}
+                        >
+                            Send Email
+                        </Button>
+                        <Dialog
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                                Confirm Sending Email
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    The generated email is a draft that may be unfinished and require additional information. Are you sure you want to send this email?
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                    No
+                                </Button>
+                                <Button
+                                    onClick={sendEmail}
+                                    color="primary"
+                                    autoFocus
+                                >
+                                    Yes
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </>
                 )}
             </Box>
+
         </Box>
     );
 };
