@@ -21,6 +21,7 @@ async function getUserProfile(email) {
     return result
 }
 
+
 async function createUserProfile(email, data) {
     if (email === undefined) throw Error("email must be provided");
     const coll = await userCollection();

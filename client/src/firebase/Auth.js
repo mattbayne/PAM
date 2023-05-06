@@ -1,22 +1,39 @@
 import React, {useState, useEffect, useContext} from 'react';
 import firebaseApp from './Firebase';
 import {Navigate, Outlet} from "react-router-dom";
+import axios from "axios";
 
 
 export const AuthContext = React.createContext(null);
 
 export const AuthProvider = ({children}) => {
+    const [avatar, setAvatar] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
-    const [loadingUser, setLoadingUser] = useState(true);
+    // const [loadingUser, setLoadingUser] = useState(true);
 
     useEffect (() => {
         firebaseApp.auth().onAuthStateChanged((user) => {
             setCurrentUser(user);
-            setLoadingUser(false);
+            // setLoadingUser(false);
         });
     }, []);
 
-    return <AuthContext.Provider value={{currentUser}}>{children}</AuthContext.Provider>;
+    useEffect(()=>{
+        async function updateAvatar() {
+            if (currentUser && currentUser['_delegate']) {
+                const email = currentUser['_delegate']['email'];
+                try {
+                    const rawResult = await axios.get(`http://localhost:3001/user/${email}`)
+                    setAvatar(rawResult['data']['profileImage'])
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+        }
+        updateAvatar()
+    }, [currentUser])
+
+    return <AuthContext.Provider value={{currentUser, avatar, setAvatar}}>{children}</AuthContext.Provider>;
 };
 
 export function AuthenticatedRoute() {

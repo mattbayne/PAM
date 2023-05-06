@@ -1,10 +1,8 @@
-// import {AuthProvider} from '../firebase/Auth';
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import '../App.css';
 
 import Navigation from './Navigation';
-// import Landing from './Landing';
 import SignUp from './SignUp';
 import {AuthenticatedRoute, AuthProvider, UnauthenticatedRoute} from "../firebase/Auth";
 import ChangePassword from "./ChangePassword";

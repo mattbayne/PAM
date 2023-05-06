@@ -95,13 +95,14 @@ function ProfileImage(props) {
 }
 
 
-function UserCard() {
-    const {currentUser} = useContext(AuthContext);
+function AccountCard() {
+    const {currentUser, avatar, setAvatar} = useContext(AuthContext);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true)
 
     const user = currentUser['_delegate'];
     const {displayName, email} = user;
+
 
     useEffect(()=>{
         async function getData() {
@@ -122,7 +123,7 @@ function UserCard() {
         const rawResult = await axios.post(
             `http://localhost:3001/user/${email}/picture`,
             {profileImage: picture})
-        setLoading(true)
+        setAvatar(picture);
         return rawResult
     }
 
@@ -139,7 +140,7 @@ function UserCard() {
                     {loading ? <h1>Loading...</h1> :
                         (
                             <div>
-                                <ProfileImage profileImage={data.profileImage} />
+                                <ProfileImage profileImage={avatar} />
                                 <br />
                                 <FormDialog onSubmit={updateProfilePic} />
                                 <h1>Welcome back, {displayName}!</h1>
@@ -169,7 +170,7 @@ function Account() {
         >
             <Box sx={{ minWidth: 275, margin: "30px"}}>
                 <Card className="m-5 p-5" variant="outlined">
-                    <UserCard />
+                    <AccountCard />
                 </Card>
             </Box>
         </Grid>

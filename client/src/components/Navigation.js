@@ -63,23 +63,24 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import logo from '../img/logo.jpeg'
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../firebase/Auth";
 import { NavLink } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import axios from "axios";
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
 
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    // const [avatar, setAvatar] = useState(null)
 
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser, avatar } = useContext(AuthContext);
     const settings = currentUser
         ? ["Account", "Dashboard", "Logout"]
         : ["Login", "Signup"];
-
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -143,10 +144,10 @@ function ResponsiveAppBar() {
                         PAM
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Open navigation menu">
                             {currentUser ? (
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                    <Avatar alt="Remy Sharp" src={avatar || "/static/images/avatar/2.jpg"} />
                                 </IconButton>
                             ) : (
                                 <IconButton onClick={handleOpenUserMenu}
