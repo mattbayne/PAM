@@ -8,14 +8,14 @@ const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
 const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
+const axios = require("axios");
+const {getTokens, cacheTokens} = require("./data/redis/Redis");
 
 require('dotenv').config();
 
 app.use(express.json());  // do we need both of these?
 app.use(bodyParser.json());
 app.use(cors());
-
-console.log('yo', process.env.OPENAI_KEY);
 
 // Configure OpenAI API key
 const openai = new OpenAIApi(
@@ -50,7 +50,6 @@ app.post("/convert-to-pdf", (req, res) => {
 
 app.post("/api/generate-email", async (req, res) => {
     const { purpose, recipientName } = req.body;
-    console.log('purpose', purpose);
 
     try {
         // Generate email content using OpenAI API
@@ -59,14 +58,10 @@ app.post("/api/generate-email", async (req, res) => {
             messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}.`}],
         });
 
-
         const generatedEmail = openaiResponse.data.choices[0].message.content.trim();
-
-        // console.log(generatedEmail);
 
         res.status(200).json({ success: true, emailContent: generatedEmail });
     } catch (error) {
-        console.log(error.response.data);
         res.status(500).json({ success: false, message: "Email generation failed." });
     }
 });
@@ -155,17 +150,15 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 // get users events for the current week
-app.get('/events', async (req, res) => {
+app.get('/events/', async (req, res) => {
     try {
         // Authorize the user with Google OAuth2
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: ['https://www.googleapis.com/auth/calendar.readonly'],
-            state: JSON.stringify({ redirectUrl: '/events' }),
+            state: JSON.stringify({ redirectUrl: '/events', testState: 'nicholai@gmail.com'}),
             redirect_uri: 'http://localhost:3001/oauth2callback'
         });
-        console.log(authUrl)
-
         res.redirect(authUrl);
     } catch (err) {
         console.error(err);
@@ -173,38 +166,121 @@ app.get('/events', async (req, res) => {
     }
 });
 
-// handle the google oauth2 callback
-app.get('/oauth2callback', async (req, res) => {
+
+async function getEvents(tokens) {
+    oauth2Client.setCredentials(tokens);
+
+    // Get the user's events for the current week
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const now = moment();
+    const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+    const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+    const events = await calendar.events.list({
+        calendarId: 'primary',
+        timeMin: startOfWeek,
+        timeMax: endOfWeek,
+        singleEvents: true,
+        orderBy: 'startTime'
+    });
+
+    return events.data.items
+}
+
+
+async function getUserTokens(req, res, next) {
+    const { email } = req.params
     try {
-        const { code } = req.query;
+        const tokens = await getTokens(email);
+        // validate tokens here
+        const events = await getEvents(tokens)
+        res.json({
+            'auth': true,
+            'events': events,
+        })
+    } catch (e) {
+        console.log(`middleware failed: `, e)
+        next()
+    }
+}
 
-        // Exchange the authorization code for an access token and refresh token
-        const { tokens } = await oauth2Client.getToken(code);
-
-        // Set the access token on the OAuth2 client
-        oauth2Client.setCredentials(tokens);
-
-        // Get the user's events for the current week
-        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-        const now = moment();
-        const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
-        const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
-        const events = await calendar.events.list({
-            calendarId: 'primary',
-            timeMin: startOfWeek,
-            timeMax: endOfWeek,
-            singleEvents: true,
-            orderBy: 'startTime'
+// first check tokens, if tokens exist and are valid, return that in the json, otherwise return authUrl
+app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
+    console.log('in main cal func')
+    const { email } = req.params
+    try {
+        // Authorize the user with Google OAuth2
+        const authUrl = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            state: JSON.stringify({ redirectUrl: '/events', email: email}),
+            redirect_uri: 'http://localhost:3001/oauth2callback'
+        })
+        res.json({
+            'auth': false,
+            'authUrl': authUrl,
         });
-
-        // Return the user's events as JSON
-        console.log('events', events.data.items)
-        res.json(events.data.items);
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-});
+}]);
+
+// app.get('/storeTokens', async (req, res) => {
+app.get('/oauth2callback', async (req, res) => {
+    const { code, state } = req.query;
+    const {email} = JSON.parse(state)
+    const { tokens } = await oauth2Client.getToken(code);
+
+    if (code === null || tokens === null) {
+        res.status(500).json({'error': 'failed to get tokens'})
+    }
+
+    await cacheTokens(email, JSON.stringify(tokens))
+    res.send("You've successfully authorized google calendar, you can now return to PAM!")
+})
+
+// handle the google oauth2 callback
+// app.get('/oauth2callback', async (req, res) => {
+//     // console.log(`params: `, req.params)
+//     // console.log(`query: `, req.query)
+//     // const state = req.query['state'];
+//     // console.log(state)
+//
+//     // const {testState} = JSON.parse(state)
+//     // console.log(`I parsed an email out of the state: `, testState)
+//
+//     try {
+//         const { code } = req.query;
+//
+//         // Exchange the authorization code for an access token and refresh token
+//         const { tokens } = await oauth2Client.getToken(code);
+//
+//         console.log(`tokens: `, tokens)
+//
+//         // Set the access token on the OAuth2 client
+//         oauth2Client.setCredentials(tokens);
+//
+//         // Get the user's events for the current week
+//         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+//         const now = moment();
+//         const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+//         const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+//         const events = await calendar.events.list({
+//             calendarId: 'primary',
+//             timeMin: startOfWeek,
+//             timeMax: endOfWeek,
+//             singleEvents: true,
+//             orderBy: 'startTime'
+//         });
+//
+//         // Return the user's events as JSON
+//         console.log('events', events.data.items)
+//         res.json(events.data.items);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

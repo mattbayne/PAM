@@ -20,6 +20,7 @@
     "moment-timezone": "^0.5.43",
     "mongodb": "^5.4.0",
     "openai": "^3.2.1",
+    "redis": "^4.6.6",
     "wkhtmltopdf": "^0.4.0"
   },
   "devDependencies": {
