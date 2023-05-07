@@ -43,7 +43,9 @@ app.post("/convert-to-pdf", (req, res) => {
     // Handle errors on the PDF stream
     pdfStream.on("error", (err) => {
         console.error("Error converting HTML to PDF:", err);
-        res.status(500).json({ error: "Failed to create PDF" });
+        // res.status(500).json({ error: "Failed to create PDF" });
+        // Abort the response and log the error
+        res.destroy(new Error('Failed to create PDF'));
     });
 });
 
