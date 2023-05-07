@@ -20,7 +20,7 @@ const MainListItems = (props) => (
             <ListItemIcon>
                 <CalendarMonthIcon />
             </ListItemIcon>
-            <ListItemText primary="Add Events to Calendar" />
+            <ListItemText primary="View your calendar" />
         </ListItemButton>
         <ListItemButton onClick={() => props.onSelect('itinerary')}>
             <ListItemIcon>

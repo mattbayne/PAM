@@ -1,21 +1,21 @@
 const express = require("express");
 const app = express();
-
+const { google } = require('googleapis');
+const moment = require('moment');
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
 const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
+const axios = require("axios");
+const {getTokens, cacheTokens} = require("./data/redis/Redis");
 
 require('dotenv').config();
 
 app.use(express.json());  // do we need both of these?
 app.use(bodyParser.json());
 app.use(cors());
-
-console.log('yo', process.env.OPENAI_KEY);
 
 // Configure OpenAI API key
 const openai = new OpenAIApi(
@@ -51,10 +51,7 @@ app.post("/convert-to-pdf", (req, res) => {
 
 
 app.post("/api/generate-email", async (req, res) => {
-    const { purpose, recipientName, displayName } = req.body;
-    console.log('purpose', purpose);
-    // console.log(displayName);
-
+    const { purpose, recipientName } = req.body;
 
     try {
         // Generate email content using OpenAI API
@@ -63,14 +60,10 @@ app.post("/api/generate-email", async (req, res) => {
             messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}. The signature name will be '${displayName}'`}],
         });
 
-
         const generatedEmail = openaiResponse.data.choices[0].message.content.trim();
-
-        // console.log(generatedEmail);
 
         res.status(200).json({ success: true, emailContent: generatedEmail });
     } catch (error) {
-        console.log(error.response.data);
         res.status(500).json({ success: false, message: "Email generation failed." });
     }
 });
@@ -148,6 +141,104 @@ app.post("/user/:email/picture", async (req, res) => {
     }
     console.log(`found: `, userData)
     res.json(userData)
+})
+
+
+// google oauth2 credentials
+const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    'http://localhost:3001/oauth2callback'
+);
+
+// get users events for the current week
+app.get('/events/', async (req, res) => {
+    try {
+        // Authorize the user with Google OAuth2
+        const authUrl = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            state: JSON.stringify({ redirectUrl: '/events', testState: 'nicholai@gmail.com'}),
+            redirect_uri: 'http://localhost:3001/oauth2callback'
+        });
+        res.redirect(authUrl);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+async function getEvents(tokens) {
+    oauth2Client.setCredentials(tokens);
+
+    // Get the user's events for the current week
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const now = moment();
+    const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+    const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+    const events = await calendar.events.list({
+        calendarId: 'primary',
+        timeMin: startOfWeek,
+        timeMax: endOfWeek,
+        singleEvents: true,
+        orderBy: 'startTime'
+    });
+
+    return events.data.items
+}
+
+
+async function getUserTokens(req, res, next) {
+    const { email } = req.params
+    try {
+        const tokens = await getTokens(email);
+        // validate tokens here
+        const events = await getEvents(tokens)
+        res.json({
+            'auth': true,
+            'events': events,
+        })
+    } catch (e) {
+        console.log(`middleware failed: `, e)
+        next()
+    }
+}
+
+
+app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
+    console.log('in main cal func')
+    const { email } = req.params
+    try {
+        // Authorize the user with Google OAuth2
+        const authUrl = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            state: JSON.stringify({ redirectUrl: '/events', email: email}),
+            redirect_uri: 'http://localhost:3001/oauth2callback'
+        })
+        res.json({
+            'auth': false,
+            'authUrl': authUrl,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+}]);
+
+
+app.get('/oauth2callback', async (req, res) => {
+    const { code, state } = req.query;
+    const {email} = JSON.parse(state)
+    const { tokens } = await oauth2Client.getToken(code);
+
+    if (code === null || tokens === null) {
+        res.status(500).json({'error': 'failed to get tokens'})
+    }
+
+    await cacheTokens(email, JSON.stringify(tokens))
+    res.redirect("http://localhost:3000")
 })
 
 
