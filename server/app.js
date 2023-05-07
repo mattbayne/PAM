@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-
+const { google } = require('googleapis');
+const moment = require('moment');
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const fs = require("fs");
 const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
@@ -146,6 +146,65 @@ app.post("/user/:email/picture", async (req, res) => {
     res.json(userData)
 })
 
+
+// google oauth2 credentials
+const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    'http://localhost:3001/oauth2callback'
+);
+
+// get users events for the current week
+app.get('/events', async (req, res) => {
+    try {
+        // Authorize the user with Google OAuth2
+        const authUrl = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            state: JSON.stringify({ redirectUrl: '/events' }),
+            redirect_uri: 'http://localhost:3001/oauth2callback'
+        });
+        console.log(authUrl)
+
+        res.redirect(authUrl);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// handle the google oauth2 callback
+app.get('/oauth2callback', async (req, res) => {
+    try {
+        const { code } = req.query;
+
+        // Exchange the authorization code for an access token and refresh token
+        const { tokens } = await oauth2Client.getToken(code);
+
+        // Set the access token on the OAuth2 client
+        oauth2Client.setCredentials(tokens);
+
+        // Get the user's events for the current week
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+        const now = moment();
+        const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+        const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
+        const events = await calendar.events.list({
+            calendarId: 'primary',
+            timeMin: startOfWeek,
+            timeMax: endOfWeek,
+            singleEvents: true,
+            orderBy: 'startTime'
+        });
+
+        // Return the user's events as JSON
+        console.log('events', events.data.items)
+        res.json(events.data.items);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
