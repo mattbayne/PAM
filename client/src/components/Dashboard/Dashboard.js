@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import {ChevronRight} from "@mui/icons-material";
 import MainListItems from "./listItems";
 import GenerateEmails from "../Features/GenerateEmails";
-import Calendar, {CalendarTest} from "../Features/Calendar";
+import Calendar from "../Features/Calendar";
 import Itinerary from "../Features/Itinerary";
 import EditDocs from "../Features/EditDocs";
 import ConvertHtmlToPdf from "../wkhtmltopdf";
@@ -120,7 +120,6 @@ function DashboardContent() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
           {selectedFunctionality === 'calendar' && <Calendar />}
-          {selectedFunctionality === 'calendarTest' && <CalendarTest />}
           {selectedFunctionality === 'itinerary' && <Itinerary />}
           {selectedFunctionality === 'editDocs' && <EditDocs />}
           {selectedFunctionality === 'htmlToPdf' && <ConvertHtmlToPdf />}
