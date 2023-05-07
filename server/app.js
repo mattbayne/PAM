@@ -203,7 +203,7 @@ async function getUserTokens(req, res, next) {
     }
 }
 
-// first check tokens, if tokens exist and are valid, return that in the json, otherwise return authUrl
+
 app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
     console.log('in main cal func')
     const { email } = req.params
@@ -225,7 +225,7 @@ app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
     }
 }]);
 
-// app.get('/storeTokens', async (req, res) => {
+
 app.get('/oauth2callback', async (req, res) => {
     const { code, state } = req.query;
     const {email} = JSON.parse(state)
@@ -239,48 +239,6 @@ app.get('/oauth2callback', async (req, res) => {
     res.redirect("http://localhost:3000")
 })
 
-// handle the google oauth2 callback
-// app.get('/oauth2callback', async (req, res) => {
-//     // console.log(`params: `, req.params)
-//     // console.log(`query: `, req.query)
-//     // const state = req.query['state'];
-//     // console.log(state)
-//
-//     // const {testState} = JSON.parse(state)
-//     // console.log(`I parsed an email out of the state: `, testState)
-//
-//     try {
-//         const { code } = req.query;
-//
-//         // Exchange the authorization code for an access token and refresh token
-//         const { tokens } = await oauth2Client.getToken(code);
-//
-//         console.log(`tokens: `, tokens)
-//
-//         // Set the access token on the OAuth2 client
-//         oauth2Client.setCredentials(tokens);
-//
-//         // Get the user's events for the current week
-//         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-//         const now = moment();
-//         const startOfWeek = now.startOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
-//         const endOfWeek = now.endOf('week').format('YYYY-MM-DDTHH:mm:ssZ');
-//         const events = await calendar.events.list({
-//             calendarId: 'primary',
-//             timeMin: startOfWeek,
-//             timeMax: endOfWeek,
-//             singleEvents: true,
-//             orderBy: 'startTime'
-//         });
-//
-//         // Return the user's events as JSON
-//         console.log('events', events.data.items)
-//         res.json(events.data.items);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send('Internal Server Error');
-//     }
-// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
