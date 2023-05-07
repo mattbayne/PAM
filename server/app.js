@@ -236,7 +236,7 @@ app.get('/oauth2callback', async (req, res) => {
     }
 
     await cacheTokens(email, JSON.stringify(tokens))
-    res.send("You've successfully authorized google calendar, you can now return to PAM!")
+    res.redirect("http://localhost:3000")
 })
 
 // handle the google oauth2 callback
