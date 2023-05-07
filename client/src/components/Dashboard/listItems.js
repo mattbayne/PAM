@@ -35,9 +35,9 @@ const MainListItems = (props) => (
             <ListItemText primary="Edit Documents" />
         </ListItemButton>
         <ListItemButton onClick={() => props.onSelect('htmlToPdf')}>
-            <PictureAsPdfIcon>
-                <ListAltIcon />
-            </PictureAsPdfIcon>
+            <ListItemIcon>
+                <PictureAsPdfIcon/>
+            </ListItemIcon>
             <ListItemText primary="HTML to PDF" />
         </ListItemButton>
     </React.Fragment>
