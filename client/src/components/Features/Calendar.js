@@ -3,6 +3,7 @@ import axios from 'axios';
 import {AuthContext} from "../../firebase/Auth";
 import Link from "@mui/material/Link";
 import moment from 'moment';
+import {ItineraryButton} from "./Itinerary";
 
 function Calendar() {
     const {currentUser} = useContext(AuthContext);
@@ -193,6 +194,7 @@ function Calendar() {
             ) : (
                 ""
             )}
+            <ItineraryButton />
             <h1>My Events</h1>
             {events !== undefined && events.length > 0 ? (
                 <div>

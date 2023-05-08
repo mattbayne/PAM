@@ -120,7 +120,6 @@ function DashboardContent() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
           {selectedFunctionality === 'calendar' && <Calendar />}
-          {selectedFunctionality === 'itinerary' && <Itinerary />}
           {selectedFunctionality === 'editDocs' && <EditDocs />}
           {selectedFunctionality === 'htmlToPdf' && <ConvertHtmlToPdf />}
           {/* Add other functionalities here */}
