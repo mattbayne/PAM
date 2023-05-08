@@ -92,6 +92,23 @@ app.post("/api/send-email", async (req, res) => {
     }
 });
 
+app.post("/api/generate-itinerary", async (req, res) => {
+    const { events, date } = req.body;
+
+    try {
+        // Generate itinerary content using OpenAI API
+        const openaiResponse = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: 'user', content: `Generate an itinerary around the following events: ${events}. Have the first line of the itinerary be Itinerary for ${date}`}],
+        });
+
+        const generatedItinerary = openaiResponse.data.choices[0].message.content.trim();
+
+        res.status(200).json({ success: true, itineraryContent: generatedItinerary });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Itinerary generation failed." });
+    }
+});
 
 app.get("/user/:email", async (req, res) => {
     const {email} = req.params;
