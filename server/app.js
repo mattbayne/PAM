@@ -186,7 +186,8 @@ app.post("/api/send-email", async (req, res) => {
     }
 });
 
-app.post("/api/generate-itinerary", async (req, res) => {
+app.post("/api/generate-day-itinerary", async (req, res) => {
+    console.log("here i am")
     const { events, date } = req.body;
 
     try {

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select, MenuItem} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import '../../App.css';
 import axios from "axios";
 import {AuthContext} from "../../firebase/Auth";
@@ -41,7 +41,7 @@ const Itinerary = () => {
         setLoading(true);
         setError('');
         try {
-            const {data: {itineraryContent}} = await axios.post('http://localhost:3001/api/generate-itinerary', { events, date });
+            const {data: {itineraryContent}} = await axios.post('http://localhost:3001/api/generate-day-itinerary', { events, date });
             console.log(itineraryContent);
             setResponse(itineraryContent);
         } catch (error) {
