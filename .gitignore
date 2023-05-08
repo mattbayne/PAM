@@ -1,6 +1,8 @@
 */node_modules/*
 node_modules/
+server/itineraries/*
 .idea
 */.env
 .env
 package-lock.json
+.DS_Store

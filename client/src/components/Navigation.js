@@ -68,6 +68,7 @@ import {AuthContext} from "../firebase/Auth";
 import { NavLink } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import axios from "axios";
+import noUser from '../img/noUser.webp'
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -147,7 +148,10 @@ function ResponsiveAppBar() {
                         <Tooltip title="Open navigation menu">
                             {currentUser ? (
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="Remy Sharp" src={avatar || "/static/images/avatar/2.jpg"} />
+                                    <Avatar alt="You"
+                                            src={avatar || noUser}
+                                            imgProps={{ referrerPolicy: "no-referrer" }}
+                                    />
                                 </IconButton>
                             ) : (
                                 <IconButton onClick={handleOpenUserMenu}

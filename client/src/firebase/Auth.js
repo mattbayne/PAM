@@ -19,12 +19,23 @@ export const AuthProvider = ({children}) => {
     }, []);
 
     useEffect(()=>{
+        console.log('changing avatar')
         async function updateAvatar() {
+            console.log(currentUser)
             if (currentUser && currentUser['_delegate']) {
                 const email = currentUser['_delegate']['email'];
                 try {
                     const rawResult = await axios.get(`http://localhost:3001/user/${email}`)
-                    setAvatar(rawResult['data']['profileImage'])
+                    const mongoPicture = rawResult['data']['profileImage']
+                    if (mongoPicture) {
+                        setAvatar(mongoPicture)
+                    } else if (currentUser.providerData[0].providerId === 'google.com'){
+                        console.log("did not find pic in mongo, defaulting to google")
+                        console.log(currentUser['_delegate'])
+                        setAvatar(currentUser['_delegate']['photoURL'])
+                    } else {
+                        setAvatar(null)
+                    }
                 } catch (e) {
                     console.log(e)
                 }

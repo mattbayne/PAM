@@ -10,6 +10,8 @@ const wkhtmltopdf = require("wkhtmltopdf");
 const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
 const axios = require("axios");
 const {getTokens, cacheTokens} = require("./data/redis/Redis");
+const {itineraryDirective} = require("./itinerary");
+const fs = require("fs");
 
 require('dotenv').config();
 
@@ -43,19 +45,21 @@ app.post("/convert-to-pdf", (req, res) => {
     // Handle errors on the PDF stream
     pdfStream.on("error", (err) => {
         console.error("Error converting HTML to PDF:", err);
-        res.status(500).json({ error: "Failed to create PDF" });
+        // res.status(500).json({ error: "Failed to create PDF" });
+        // Abort the response and log the error
+        res.destroy(new Error('Failed to create PDF'));
     });
 });
 
 
 app.post("/api/generate-email", async (req, res) => {
-    const { purpose, recipientName } = req.body;
+    const { purpose, recipientName, displayName } = req.body;
 
     try {
         // Generate email content using OpenAI API
         const openaiResponse = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
-            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}.`}],
+            messages: [{ role: 'user', content: `Generate an email for the following purpose: ${purpose}. Please ensure that the first line of your response is the subject line, without explicitly including 'Subject: '. Simply provide the subject text. Use salutation 'Dear ${recipientName}. The signature name will be '${displayName}'`}],
         });
 
         const generatedEmail = openaiResponse.data.choices[0].message.content.trim();
@@ -66,13 +70,103 @@ app.post("/api/generate-email", async (req, res) => {
     }
 });
 
+function getDateStr() {
+    const date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
+
+app.get('/api/get-itinerary-file', async (req, res) => {
+    const { email } = req.query;
+    const fileName = `${email}~itinerary_${getDateStr()}.pdf`
+
+    const path = `itineraries/${fileName}`
+    if (!fs.existsSync(path)) {
+        res.status(404).json({"error": "itinerary file does not exist"});
+    } else {
+        res.json({'fileName': fileName})
+    }
+})
+
+
+app.post('/api/generate-itinerary', async (req, res) => {
+    const { email, name } = req.body;
+    const outputFileName = `${email}~itinerary_${getDateStr()}.pdf`
+
+    try {
+        const events = await getUserEvents(email);
+        const directive = itineraryDirective(name, JSON.stringify(events));
+        const openaiResponse = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{role: 'user', content: directive}],
+        });
+        const htmlString = openaiResponse.data.choices[0].message.content.trim().replace(/\n/g, ' ');
+        // res.json({'itinerary': htmlString})
+        wkhtmltopdf(htmlString, {
+            pageSize: "letter",
+            output: `itineraries/${outputFileName}`
+        });
+        res.json({
+            "path": outputFileName,
+        })
+    } catch (e) {
+        res.status(500).json({"error": `failed to generate itinerary: ${e}`})
+    }
+})
+
+app.get('/api/get-itinerary/:fileName', async (req, res) => {
+
+    const {fileName} = req.params;
+    const path = `itineraries/${fileName}`
+    if (!fs.existsSync(path)) {
+        res.status(404).json({"error": "itinerary file does not exist"});
+        return
+    }
+
+    const base64str = fs.readFileSync(path).toString("base64")
+
+    res.type('application/pdf');
+    res.header('Content-Disposition', `attachment; filename="itinerary.pdf"`);
+    res.send(Buffer.from(base64str, 'base64'));
+})
+
+
+app.post('/api/send-itinerary', async (req, res) => {
+    try {
+        const { email, fileName } = req.body;
+        const path = `itineraries/${fileName}`
+        if (!fs.existsSync(path)) {
+            res.status(404).json({"error": "itinerary file does not exist"});
+            return
+        }
+        const attachment = fs.readFileSync(path).toString("base64")
+        const msg = {
+            to: email,
+            from: "nlespera@stevens.edu",
+            subject: "This weeks itinerary",
+            text: "See attached!",
+            attachments: [
+                {
+                    content: attachment,
+                    filename: "itinerary.pdf",
+                    type: "application/pdf",
+                    disposition: "attachment"
+                }
+            ]
+        };
+        await sgMail.send(msg);
+        res.json({"success": true})
+    } catch (e) {
+        res.status(500).json({'error': e})
+    }
+})
+
 
 app.post("/api/send-email", async (req, res) => {
     const { email, subject, body } = req.body;
-
-    console.log('email', email);
-    console.log('subject', subject);
-    console.log('body', body);
 
     try {
         const msg = {
@@ -112,7 +206,6 @@ app.post("/api/generate-itinerary", async (req, res) => {
 
 app.get("/user/:email", async (req, res) => {
     const {email} = req.params;
-    console.log(`getting data for email: `, email)
 
     let userData;
     try {
@@ -126,7 +219,6 @@ app.get("/user/:email", async (req, res) => {
         console.log("user does not exist in mongo, initializing...")
         userData = await createUserProfile(email)
     }
-    console.log(`found: `, userData)
     res.json(userData)
 })
 
@@ -154,7 +246,6 @@ app.post("/user/:email/picture", async (req, res) => {
         console.log("updating existing user profile")
         userData = await updateUserProfilePicture(email, profileImage)
     }
-    console.log(`found: `, userData)
     res.json(userData)
 })
 
@@ -204,25 +295,27 @@ async function getEvents(tokens) {
 }
 
 
+async function getUserEvents(email) {
+    const tokens = await getTokens(email);
+    // validate tokens here
+    return await getEvents(tokens)
+}
+
+
 async function getUserTokens(req, res, next) {
     const { email } = req.params
     try {
-        const tokens = await getTokens(email);
-        // validate tokens here
-        const events = await getEvents(tokens)
         res.json({
             'auth': true,
-            'events': events,
+            'events': await getUserEvents(email),
         })
     } catch (e) {
-        console.log(`middleware failed: `, e)
         next()
     }
 }
 
 
 app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
-    console.log('in main cal func')
     const { email } = req.params
     try {
         // Authorize the user with Google OAuth2
