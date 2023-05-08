@@ -105,7 +105,7 @@ const GenerateEmails = () => {
                 }}
             >
                 <Typography variant="h4" mb={4}>
-                    What email would you like to send?
+                    Enter text that
                 </Typography>
                 <Box component="form" width={1}>
                     <TextField

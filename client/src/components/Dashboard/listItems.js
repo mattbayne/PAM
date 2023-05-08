@@ -32,7 +32,7 @@ const MainListItems = (props) => (
             <ListItemIcon>
                 <EditIcon />
             </ListItemIcon>
-            <ListItemText primary="Edit Documents" />
+            <ListItemText primary="Proofread Text" />
         </ListItemButton>
         <ListItemButton onClick={() => props.onSelect('htmlToPdf')}>
             <ListItemIcon>

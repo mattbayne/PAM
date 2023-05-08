@@ -51,6 +51,41 @@ app.post("/convert-to-pdf", (req, res) => {
     });
 });
 
+app.post("/api/proofread-text", async (req, res) => {
+    const { text, style, tone } = req.body;
+
+    let content;
+    if (style !== 'n/a' && tone !== 'n/a') {
+        content = `Proofread this text: '${text}.' Make sure the style is ${style} and tone is ${tone}.`;
+    }
+    else if (style === 'n/a' && tone === 'n/a') {
+        content = `Proofread this text: '${text}'.`;
+    }
+    else if (style === 'n/a') {
+        content = `Proofread this text: '${text}.' Make sure the tone is ${tone}.`;
+    }
+    else {
+        content = `Proofread this text: '${text}.' Make sure the style is ${style}.`;
+    }
+
+    console.log(content);
+
+    try {
+        const openaiResponse = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: 'user', content: content + ' Below the result, list out all the changes you made. If the text does not make sense to proofread, respond saying that it does not make sense to proofread. If the text looks correct, respond accordingly.' }]
+        });
+
+        const proofreadText = openaiResponse.data.choices[0].message.content.trim();
+
+        console.log(proofreadText);
+
+        res.status(200).json({ success: true, proofreadText: proofreadText });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to proofread text." });
+    }
+});
+
 
 app.post("/api/generate-email", async (req, res) => {
     const { purpose, recipientName, displayName } = req.body;
