@@ -53,7 +53,7 @@ app.post("/convert-to-pdf", (req, res) => {
 
 
 app.post("/api/generate-email", async (req, res) => {
-    const { purpose, recipientName } = req.body;
+    const { purpose, recipientName, displayName } = req.body;
 
     try {
         // Generate email content using OpenAI API
