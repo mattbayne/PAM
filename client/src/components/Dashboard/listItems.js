@@ -26,7 +26,7 @@ const MainListItems = (props) => (
             <ListItemIcon>
                 <ListAltIcon />
             </ListItemIcon>
-            <ListItemText primary="Create an Itinerary for the Day" />
+            <ListItemText primary="Create an Itinerary" />
         </ListItemButton>
         <ListItemButton onClick={() => props.onSelect('editDocs')}>
             <ListItemIcon>
