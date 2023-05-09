@@ -355,7 +355,6 @@ async function postUserEvents(email, event) {
 
 async function getUserTokens(req, res, next) {
     const { email } = req.params
-    console.log("da body", req.body)
     try {
         res.json({
             'auth': true,
@@ -368,7 +367,6 @@ async function getUserTokens(req, res, next) {
 
 async function verifyUserTokens(email, event) {
     try {
-        console.log("made it here baby")
         const status = await postUserEvents(email, event);
         return{
             'auth': true,
@@ -383,7 +381,6 @@ async function verifyUserTokens(email, event) {
 
 app.post('/calendarAuth/event/:email',  async (req, res) => {
     const {email} = req.params
-    console.log('in here', req.body)
     const event = req.body;
 
     try {
@@ -402,7 +399,6 @@ app.post('/calendarAuth/event/:email',  async (req, res) => {
 
 app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
     const { email } = req.params
-    console.log('why we here++++++++++++++++++++')
     try {
         // Authorize the user with Google OAuth2
         const authUrl = oauth2Client.generateAuthUrl({

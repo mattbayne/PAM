@@ -243,6 +243,7 @@ function Calendar() {
                     description: event.description
                 });
                 alert('Event added successfully!');
+                //setOpen(false);
             } else {
                 alert('Error adding event!');
             }
