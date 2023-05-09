@@ -128,7 +128,10 @@ app.post('/api/generate-itinerary', async (req, res) => {
 
     try {
         const events = await getUserEvents(email);
-        const directive = itineraryDirective(name, JSON.stringify(events));
+        const reducedEvents = events.map((event)=>{
+            return (({summary, start: {dateTime: start}, end: {dateTime: end}}) => ({summary, start, end}))(event)
+        })
+        const directive = itineraryDirective(name, JSON.stringify(reducedEvents));
         const openaiResponse = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [{role: 'user', content: directive}],
@@ -143,6 +146,7 @@ app.post('/api/generate-itinerary', async (req, res) => {
             "path": outputFileName,
         })
     } catch (e) {
+        console.log(e)
         res.status(500).json({"error": `failed to generate itinerary: ${e}`})
     }
 })
