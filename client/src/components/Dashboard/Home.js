@@ -2,23 +2,11 @@ import React from 'react';
 import { Typography, Box, List, ListItem, ListItemText, Container} from '@mui/material';
 import styled from '@emotion/styled';
 
-const AnimatedTitle = styled(Typography)`
+const GradientTitle = styled(Typography)`
   background-image: linear-gradient(45deg, #f06, #f80, #f06);
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: gradient 5s ease infinite;
-
-  @keyframes gradient {
-    0% {
-      background-position: 0 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0 50%;
-    }
-  }
+  mask-image: linear-gradient(to left, transparent 0%, #000 15%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 `;
 
 
@@ -42,9 +30,9 @@ const Home = () => {
         <Container maxWidth="md">
             <Box my={4}>
 
-                    <AnimatedTitle variant="h4" component="h1" gutterBottom>
-                        Welcome to PAM - Personalized Assistant & Manager
-                    </AnimatedTitle>
+                <GradientTitle variant="h4" component="h1" gutterBottom>
+                    Welcome to PAM - Personalized Assistant & Manager
+                </GradientTitle>
 
                     <Typography paragraph>
                         PAM is designed to simplify your life by handling administrative tasks for you. With PAM, you can:
