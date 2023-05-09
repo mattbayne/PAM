@@ -414,7 +414,7 @@ function Calendar() {
                     ))}
                 </div>
             ) : (
-                <p>Loading events...</p>
+                <p>No events for this week!</p>
             )}
         </div>
     );
