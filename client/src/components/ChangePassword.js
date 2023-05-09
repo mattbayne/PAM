@@ -9,13 +9,6 @@ import Link from "@mui/material/Link";
 import {doChangePassword} from "../firebase/FirebaseFunctions";
 import {AuthContext} from "../firebase/Auth";
 
-// function ChangePassword() {
-//     return (
-//         <Button>
-//             Change Password
-//         </Button>
-//     );
-// }
 
 function ChangePassword() {
     const [open, setOpen] = useState(false);
@@ -28,7 +21,7 @@ function ChangePassword() {
 
     useEffect(()=>{
         setProvider(currentUser.providerData[0].providerId)
-    }, [provider])
+    }, [currentUser, provider])
 
     async function validateCurrentPassword() {
         const credential = firebase.auth.EmailAuthProvider.credential(

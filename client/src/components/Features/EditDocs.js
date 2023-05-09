@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -12,7 +12,6 @@ import {
     FormLabel,
     Radio,
     RadioGroup,} from "@mui/material";
-import {AuthContext} from "../../firebase/Auth";
 
 const EditDocs = () => {
 
@@ -22,17 +21,7 @@ const EditDocs = () => {
     const [style, setStyle] = useState('');
     const [tone, setTone] = useState('');
     const [text, setText] = useState('');
-    const {currentUser} = useContext(AuthContext);
-    const user = currentUser['_delegate'];
-    const {displayName} = user;
 
-
-    const resetForm = () => {
-        setStyle('');
-        setTone('');
-        setResponse('');
-        setText('');
-    };
 
     const proofreadText = async () => {
         if (!style.trim() || !tone.trim() || !text.trim()) {

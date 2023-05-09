@@ -147,6 +147,7 @@ function AccountCard() {
                                 <Box textAlign="center">
                                     <ProfileImage profileImage={avatar} />
                                 </Box>
+                                {(data) ? "" : ""}
                                 <br />
                                 <br/>
                                 <Box textAlign="center">

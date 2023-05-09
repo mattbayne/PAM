@@ -32,7 +32,7 @@ function Calendar() {
             }
         };
         fetchEvents();
-    }, []);
+    }, [email]);
 
     // TODO: Make this slightly prettier
     if (loading) {
@@ -197,10 +197,10 @@ function Calendar() {
                 <Button variant='outlined' >Add Event</Button>
             </Box>
             <h1>My Events</h1>
-            {events !== undefined && events.length > 0 ? (
+            {events.length > 0 ? (
                 <div>
                     {days.map((day) => (
-                        <div>
+                        <div key={day}>
                             <h2>{day}</h2>
                             {dayEvents[day] && dayEvents[day].length > 0 ? (
                                 <table className="calendar-table">

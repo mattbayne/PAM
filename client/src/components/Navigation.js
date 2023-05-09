@@ -1,53 +1,3 @@
-// import React, {useContext} from 'react';
-// import {NavLink} from 'react-router-dom';
-// import {AuthContext} from "../firebase/Auth";
-// import SignOutButton from "./LogOut";
-// import '../App.css'
-//
-// const Navigation = ()=>{
-//     const {currentUser} = useContext(AuthContext);
-//     return <div>{currentUser ? <NavigationAuth /> : <NavigationNoAuth /> }</div>
-// }
-//
-// const NavigationAuth = ()=>{
-//     return (
-//         <nav className='navigation'>
-//             <ul>
-//                 <li>
-//                     <NavLink to='/'>Landing</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/private'>Private</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/changepassword'>Change Password</NavLink>
-//                 </li>
-//             </ul>
-//         </nav>
-//     );
-// }
-//
-// const NavigationNoAuth = ()=> {
-//     return (
-//         <nav className='navigation'>
-//             <ul>
-//                 <li>
-//                     <NavLink to='/'>Landing</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/signup'>Sign-up</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/signin'>Sign-In</NavLink>
-//                 </li>
-//             </ul>
-//         </nav>
-//     );
-// }
-//
-// export default Navigation;
-//
-
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -58,23 +8,17 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import logo from '../img/logo.jpeg'
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import {AuthContext} from "../firebase/Auth";
 import { NavLink } from 'react-router-dom';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import axios from "axios";
 import noUser from '../img/noUser.webp'
 
 
-const pages = ['Products', 'Pricing', 'Blog'];
-
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     // const [avatar, setAvatar] = useState(null)
 
@@ -83,15 +27,8 @@ function ResponsiveAppBar() {
         ? ["Account", "Dashboard", "Logout"]
         : ["Login", "Signup"];
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {

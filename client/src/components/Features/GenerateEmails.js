@@ -16,18 +16,9 @@ const GenerateEmails = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [open, setOpen] = useState(false);
-    const {currentUser, avatar, setAvatar} = useContext(AuthContext);
+    const {currentUser} = useContext(AuthContext);
     const user = currentUser['_delegate'];
     const {displayName} = user;
-
-    const convertNewLinesToBreaks = (text) => {
-        return text.split('\n').map((line, index) => (
-            <React.Fragment key={index}>
-                {line}
-                <br />
-            </React.Fragment>
-        ));
-    };
 
     const resetForm = () => {
         setEmail('');

@@ -140,7 +140,6 @@ const Itinerary = () => {
                     <TextField
                         multiline
                         rows={15}
-                        rowsMax={20}
                         value={response}
                         onChange={(e) => setResponse(e.target.value)}
                         fullWidth
@@ -314,7 +313,7 @@ export const ItineraryButton = () => {
 
         async function sendPDF() {
             try {
-                const res = await axios.post(
+                await axios.post(
                     `http://localhost:3001/api/send-itinerary`,
                     {
                         email: email,
