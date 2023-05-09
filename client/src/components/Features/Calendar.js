@@ -6,6 +6,10 @@ import moment from 'moment';
 import {ItineraryButton} from "./Itinerary";
 import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
+import { LocalizationProvider, DateTimePicker} from '@mui/x-date-pickers';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 function Calendar() {
     const {currentUser} = useContext(AuthContext);
@@ -13,6 +17,20 @@ function Calendar() {
     const [auth, setAuth] = useState(false);
     const [authUrl, setAuthUrl] = useState(null)
     const [events, setEvents] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [event, setEvent] = useState({
+        summary: '',
+        location: '',
+        start: {
+            dateTime: '',
+            timeZone: 'America/New_York'
+        },
+        end: {
+            dateTime: '',
+            timeZone: 'America/New_York'
+        },
+        description: ''
+    });
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -180,6 +198,83 @@ function Calendar() {
         }
     })
 
+    const handleClick = async () => {
+        setOpen(true);
+    }
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
+    const handleAddEvent = async () => {
+        console.log('event', event);
+        try {
+            const formattedEvent = {
+                summary: event.summary,
+                location: event.location,
+                start: {
+                    dateTime: new Date(event.start.dateTime).toISOString(),
+                    timeZone: 'America/New_York'
+                },
+                end: {
+                    dateTime: new Date(event.end.dateTime).toISOString(),
+                    timeZone: 'America/New_York'
+                },
+                description: event.description
+            };
+            console.log(formattedEvent)
+            const newEvent = await axios.post(`http://localhost:3001/calendarAuth/event/${email}`, formattedEvent);
+            const response = newEvent.data
+            console.log('newEvent', response);
+            console.log('data', response['data'])
+            if (response['data']['auth']) {
+                setOpen(false);
+                setEvent({
+                    summary: event.summary,
+                    location: event.location,
+                    start: {
+                        dateTime: new Date(event.start.dateTime).toISOString(),
+                        timeZone: 'America/New_York'
+                    },
+                    end: {
+                        dateTime: new Date(event.end.dateTime).toISOString(),
+                        timeZone: 'America/New_York'
+                    },
+                    description: event.description
+                });
+                alert('Event added successfully!');
+            } else {
+                alert('Error adding event!');
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            [name]: value
+        }));
+    };
+
+    const handleDateTimeChange = (date, type) => {
+        const dateTimeString = date.toISOString();
+        setEvent(prevEvent => ({
+            ...prevEvent,
+            [type]: {
+                dateTime: dateTimeString,
+                timeZone: "America/New_York",
+            },
+        }));
+    };
+
+
+
+
     return (
         <div>
             {authUrl ? (
@@ -194,10 +289,68 @@ function Calendar() {
             </Box>
             <br/>
             <Box textAlign="right">
-                <Button variant='outlined' >Add Event</Button>
+                <Button variant='outlined' onClick={handleClick}>Add Event</Button>
+                <Dialog open={open} onClose={handleCancel}>
+                    <DialogTitle>Add Event</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Please enter the details of the new event.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            name="summary"
+                            label="Summary"
+                            type="text"
+                            fullWidth
+                            value={event.summary}
+                            onChange={handleInputChange}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="location"
+                            label="Location"
+                            type="text"
+                            fullWidth
+                            value={event.location}
+                            onChange={handleInputChange}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker
+                                label="Start Date and Time"
+                                inputFormat="yyyy-MM-dd hh:mm a"
+                                value={event.start.dateTime}
+                                onChange={(newValue) => handleDateTimeChange(newValue, "start")}
+                            />
+                            <DateTimePicker
+                                label="End Date and Time"
+                                inputFormat="yyyy-MM-dd hh:mm a"
+                                value={event.end.dateTime}
+                                onChange={(newValue) => handleDateTimeChange(newValue, "end")}
+                            />
+                        </LocalizationProvider>
+                        <TextField
+                            margin="dense"
+                            name="description"
+                            label="Description"
+                            type="text"
+                            fullWidth
+                            value={event.description}
+                            onChange={handleInputChange}
+                        />
+                    </DialogContent>
+                    <Box textAlign="center">
+                        <Button onClick={handleAddEvent} color="primary">
+                            Add
+                        </Button>
+                        <Button onClick={handleCancel} color="primary">
+                            Cancel
+                        </Button>
+                    </Box>
+                </Dialog>
             </Box>
             <h1>My Events</h1>
-            {events !== undefined && events.length > 0 ? (
+            {events.length > 0 ? (
                 <div>
                     {days.map((day) => (
                         <div>
