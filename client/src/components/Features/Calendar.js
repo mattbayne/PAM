@@ -242,7 +242,7 @@ function Calendar() {
                     description: event.description
                 }
                 setOpen(false);
-                setEvent(eventData);
+                setEvent({});
                 setEvents([...events, eventData])
                 alert('Event added successfully!');
                 setOpen(false);
@@ -274,6 +274,9 @@ function Calendar() {
             },
         }));
     };
+
+    const startDateTime = event.start ? event.start.dateTime : '';
+    const endDateTime = event.end ? event.end.dateTime : '';
 
     return (
         <div>
@@ -321,7 +324,7 @@ function Calendar() {
                                 <DateTimePicker
                                     label="Start Date and Time"
                                     inputFormat="yyyy-MM-dd hh:mm a"
-                                    value={event.start.dateTime}
+                                    value={startDateTime}
                                     onChange={(newValue) => handleDateTimeChange(newValue, "start")}
                                     sx={{width: '48%'}}
                                 />
@@ -329,7 +332,7 @@ function Calendar() {
                                 <DateTimePicker
                                     label="End Date and Time"
                                     inputFormat="yyyy-MM-dd hh:mm a"
-                                    value={event.end.dateTime}
+                                    value={endDateTime}
                                     onChange={(newValue) => handleDateTimeChange(newValue, "end")}
                                     sx={{width: '48%'}}
                                 />
