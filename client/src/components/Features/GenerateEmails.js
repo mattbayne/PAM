@@ -104,8 +104,8 @@ const GenerateEmails = () => {
                     justifyContent: 'flex-start',
                 }}
             >
-                <Typography variant="h4" mb={4}>
-                    Enter text that
+                <Typography variant="h2" mb={4} fontSize="30px">
+                    Fill out the Fields Below to Generate Your Email
                 </Typography>
                 <Box component="form" width={1}>
                     <TextField

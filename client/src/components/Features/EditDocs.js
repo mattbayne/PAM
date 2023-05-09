@@ -77,14 +77,14 @@ const EditDocs = () => {
                     justifyContent: 'flex-start',
                 }}
             >
-                <Typography variant="h4" mb={4}>
-                    Paste in text that you would like PAM to proofread for grammar, spelling, style, and tone
+                <Typography variant="h2" mb={4} fontSize="40px">
+                    Paste in Text for PAM to Proofread for Grammar, Spelling, Style, and Tone
                 </Typography>
                 <Box component="form" width={1}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <FormControl component="fieldset" fullWidth sx={{ mb: 2 }} required>
-                                <FormLabel component="legend" sx={{ fontSize: '1.25rem' }}>Style</FormLabel>
+                                <FormLabel component="legend" sx={{ fontSize: '1.25rem' }}>Style:</FormLabel>
                                 <RadioGroup
                                     aria-label="style"
                                     name="style"
@@ -99,7 +99,7 @@ const EditDocs = () => {
                         </Grid>
                         <Grid item xs={6}>
                             <FormControl component="fieldset" fullWidth sx={{ mb: 2 }} required>
-                                <FormLabel component="legend" sx={{ fontSize: '1.25rem' }}>Tone</FormLabel>
+                                <FormLabel component="legend" sx={{ fontSize: '1.25rem' }}>Tone:</FormLabel>
                                 <RadioGroup
                                     aria-label="tone"
                                     name="tone"

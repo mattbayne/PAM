@@ -18,6 +18,7 @@ import Calendar from "../Features/Calendar";
 import Itinerary from "../Features/Itinerary";
 import EditDocs from "../Features/EditDocs";
 import ConvertHtmlToPdf from "../wkhtmltopdf";
+import Tooltip from "@mui/material/Tooltip";
 
 
 
@@ -107,9 +108,11 @@ function DashboardContent() {
               px: [1],
             }}
           >
-            <IconButton onClick={toggleDrawer}>
-              {open ? <ChevronLeftIcon /> : <ChevronRight />}
-            </IconButton>
+            <Tooltip title="Expand/Collapse">
+              <IconButton onClick={toggleDrawer}>
+                {open ? <ChevronLeftIcon /> : <ChevronRight />}
+              </IconButton>
+            </Tooltip>
           </Toolbar>
           <Divider />
           <List component="nav">

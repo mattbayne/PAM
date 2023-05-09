@@ -79,6 +79,10 @@
   width: 25%
 }
 
+.h2 {
+  text-align: center;
+}
+
 .button-itinerary {
   background-color: #4CAF50; /* Green */
   color: white;

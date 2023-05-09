@@ -145,12 +145,23 @@ function AccountCard() {
                     {loading ? <h1>Loading...</h1> :
                         (
                             <div>
-                                <ProfileImage profileImage={avatar} />
+                                <Box textAlign="center">
+                                    <ProfileImage profileImage={avatar} />
+                                </Box>
                                 <br />
-                                <FormDialog onSubmit={updateProfilePic} />
-                                <h1>Welcome back, {displayName}!</h1>
-                                <ChangePassword/>
-                                <LogOutButton/>
+                                <br/>
+                                <Box textAlign="center">
+                                    <FormDialog onSubmit={updateProfilePic} />
+                                </Box>
+                                <br/>
+                                <h2>Welcome back, {displayName}!</h2>
+                                <br/>
+                                <Box textAlign="center">
+                                    <ChangePassword/>
+                                    <br/>
+                                    <br/>
+                                    <LogOutButton/>
+                                </Box>
                             </div>
                         )
                     }

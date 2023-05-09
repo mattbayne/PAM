@@ -45,13 +45,13 @@ export default function Login() {
             (reason)=>{
                 switch(reason['code']) {
                     case "auth/wrong-password":
-                        setError("invalid username or password, please try again.");
+                        setError("Invalid Username/Password, please try again.");
                         break;
                     case "auth/too-many-requests":
-                        setError("too many failed attempts, please try again later.");
+                        setError("Too many failed attempts, please try again later.");
                         break;
                     default:
-                        setError(`unable to login due to unknown error, please contact an administrator: ${reason['code']}`)
+                        setError(`Unable to login due to unknown error, please contact an administrator: ${reason['code']}`)
                         break
                 }
                 setLoggingIn(false)
@@ -81,7 +81,7 @@ export default function Login() {
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
-                    <Typography component="h1" variant="body1">
+                    <Typography component="h2" fontSize="30px">
                         Log in
                     </Typography>
                     {(error !== null) ? <Typography component="h2" color="red"><i>{error}</i></Typography> : "" }
@@ -118,17 +118,20 @@ export default function Login() {
                         >
                             Sign In
                         </Button>
-                        <Link href="/signup" variant="body2">
-                            {"Don't have an account? Sign Up"}
-                        </Link>
-                        <br />
+                        <Box textAlign="center">
+                            <Link href="/signup" variant="body2" fontSize="15px">
+                                {"Don't have an account? Sign Up"}
+                            </Link>
+                        </Box>
                         <br />
                         <Grid container justifyContent="center">
-                            <Grid item>
-                                <GoogleButton
-                                    onClick={() => {doSocialSignIn('google') }}
-                                />
-                            </Grid>
+                            <Box bgcolor="lightgray" p={2}>
+                                <Grid item>
+                                    <GoogleButton
+                                        onClick={() => {doSocialSignIn('google') }}
+                                    />
+                                </Grid>
+                            </Box>
                         </Grid>
                     </Box>
                 </Box>

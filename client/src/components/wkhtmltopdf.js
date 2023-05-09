@@ -33,7 +33,7 @@ const ConvertHtmlToPdf = () => {
 
   return (
     <div>
-      <h1>Convert HTML to PDF</h1>
+      <h2 className="h2">Enter HTML to be Converted into a PDF:</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="html">HTML:</label>

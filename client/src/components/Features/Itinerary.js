@@ -90,8 +90,8 @@ const Itinerary = () => {
                     justifyContent: 'flex-start',
                 }}
             >
-                <Typography variant="h4" mb={4}>
-                    What events or activities do you have coming up?
+                <Typography variant="h2" mb={4} fontSize="40px">
+                    Enter the Date and Event/Activities to be Included in your Itinerary
                 </Typography>
                 <Box component="form" width={1}>
                     <TextField
@@ -222,8 +222,8 @@ const Itinerary = () => {
                                 <DialogContentText id="alert-dialog-description">
                                     Select a time for your emailed itinerary to be sent.
                                 </DialogContentText>
-                                <Select 
-                                    value={selectedTime} 
+                                <Select
+                                    value={selectedTime}
                                     onChange={(e) => setSelectedTime(e.target.value)}
                                 >
                                     <MenuItem value="0:00">12:00am</MenuItem>
@@ -237,7 +237,7 @@ const Itinerary = () => {
                                 </Select>
                             </DialogContent>
                             <DialogActions>
-                                
+
                                 <Button onClick={handleClose} color="primary">
                                     Back
                                 </Button>
