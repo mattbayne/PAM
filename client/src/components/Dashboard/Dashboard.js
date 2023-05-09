@@ -20,6 +20,8 @@ import EditDocs from "../Features/EditDocs";
 import ConvertHtmlToPdf from "../wkhtmltopdf";
 import Tooltip from "@mui/material/Tooltip";
 import Home from "./Home";
+import DashboardContext from "./DashboardContext";
+import {useContext, useEffect} from "react";
 
 
 
@@ -87,10 +89,14 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
-  const [selectedFunctionality, setSelectedFunctionality] = React.useState('');
+  const { selectedFunctionality, setSelectedFunctionality} = useContext(DashboardContext);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    console.log(selectedFunctionality);
+  }, [selectedFunctionality])
 
   const handleFunctionalitySelect = (functionality) => {
     setSelectedFunctionality(functionality);
@@ -122,7 +128,7 @@ function DashboardContent() {
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {selectedFunctionality === '' && <Home/>}
+          {selectedFunctionality === 'home' && <Home/>}
           {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
           {selectedFunctionality === 'calendar' && <Calendar />}
           {selectedFunctionality === 'itinerary' && <Itinerary />}

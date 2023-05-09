@@ -1,53 +1,3 @@
-// import React, {useContext} from 'react';
-// import {NavLink} from 'react-router-dom';
-// import {AuthContext} from "../firebase/Auth";
-// import SignOutButton from "./LogOut";
-// import '../App.css'
-//
-// const Navigation = ()=>{
-//     const {currentUser} = useContext(AuthContext);
-//     return <div>{currentUser ? <NavigationAuth /> : <NavigationNoAuth /> }</div>
-// }
-//
-// const NavigationAuth = ()=>{
-//     return (
-//         <nav className='navigation'>
-//             <ul>
-//                 <li>
-//                     <NavLink to='/'>Landing</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/private'>Private</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/changepassword'>Change Password</NavLink>
-//                 </li>
-//             </ul>
-//         </nav>
-//     );
-// }
-//
-// const NavigationNoAuth = ()=> {
-//     return (
-//         <nav className='navigation'>
-//             <ul>
-//                 <li>
-//                     <NavLink to='/'>Landing</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/signup'>Sign-up</NavLink>
-//                 </li>
-//                 <li>
-//                     <NavLink to='/signin'>Sign-In</NavLink>
-//                 </li>
-//             </ul>
-//         </nav>
-//     );
-// }
-//
-// export default Navigation;
-//
-
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -69,6 +19,9 @@ import { NavLink } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import axios from "axios";
 import noUser from '../img/noUser.webp'
+import { useNavigate } from 'react-router-dom';
+import DashboardContext from "./Dashboard/DashboardContext";
+
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -76,6 +29,8 @@ const pages = ['Products', 'Pricing', 'Blog'];
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const { setSelectedFunctionality } = useContext(DashboardContext);
+
     // const [avatar, setAvatar] = useState(null)
 
     const { currentUser, avatar } = useContext(AuthContext);
@@ -103,9 +58,7 @@ function ResponsiveAppBar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 0, width: '150px', height: '150px', display: { xs: 'none', md: 'flex' }, mr: 1 }}>
-                        <NavLink to="/">
-                            <img src={logo} alt='logo' style={{ maxWidth: '100%', maxHeight: '100%' }} draggable="false" />
-                        </NavLink>
+                        <img src={logo} alt='logo' style={{ maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }} draggable={"false"} onClick={() => setSelectedFunctionality('home')} />
                     </Box>
                     <Typography
                         variant="h1"
@@ -124,14 +77,11 @@ function ResponsiveAppBar() {
                     >
                         Personalized Assistant & Manager
                     </Typography>
-                    <NavLink to='/' style={{color: 'inherit'}}>
-                        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    </NavLink>
+                        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, cursor: 'pointer' }} onClick={() => setSelectedFunctionality('home')} />
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
@@ -141,7 +91,9 @@ function ResponsiveAppBar() {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            cursor: 'pointer'
                         }}
+                        onClick={() => setSelectedFunctionality('home')}
                     >
                         PAM
                     </Typography>
@@ -207,7 +159,7 @@ function ResponsiveAppBar() {
                                         </NavLink>
                                     )}
                                     {setting === "Dashboard" && (
-                                        <NavLink to="/" style={{color: '#076efd'}} >
+                                        <NavLink onClick={() => setSelectedFunctionality('home')} style={{color: '#076efd'}} >
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
