@@ -1,5 +1,0 @@
-To run, you must have:
-
-mongodb installed and running on the default port
-redis installed and running on the default port
-wkhtmltopdf binaries installed on the server (in addition to the node libraries!)

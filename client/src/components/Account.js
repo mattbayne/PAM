@@ -115,7 +115,6 @@ function AccountCard() {
                 const rawResult = await axios.get(`http://localhost:3001/user/${email}`)
                 setData(rawResult['data'])
             } catch(e) {
-                console.log(`failed to get data: `, e)
                 setData(defaultData)
             } finally {
                 setLoading(false)
@@ -145,12 +144,23 @@ function AccountCard() {
                     {loading ? <h1>Loading...</h1> :
                         (
                             <div>
-                                <ProfileImage profileImage={avatar} />
+                                <Box textAlign="center">
+                                    <ProfileImage profileImage={avatar} />
+                                </Box>
                                 <br />
-                                <FormDialog onSubmit={updateProfilePic} />
-                                <h1>Welcome back, {displayName}!</h1>
-                                <ChangePassword/>
-                                <LogOutButton/>
+                                <br/>
+                                <Box textAlign="center">
+                                    <FormDialog onSubmit={updateProfilePic} />
+                                </Box>
+                                <br/>
+                                <h2>Welcome back, {displayName}!</h2>
+                                <br/>
+                                <Box textAlign="center">
+                                    <ChangePassword/>
+                                    <br/>
+                                    <br/>
+                                    <LogOutButton/>
+                                </Box>
                             </div>
                         )
                     }

@@ -8,7 +8,6 @@ const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
 const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
-const axios = require("axios");
 const {getTokens, cacheTokens} = require("./data/redis/Redis");
 const {itineraryDirective} = require("./itinerary");
 const fs = require("fs");
@@ -49,6 +48,37 @@ app.post("/convert-to-pdf", (req, res) => {
         // Abort the response and log the error
         res.destroy(new Error('Failed to create PDF'));
     });
+});
+
+app.post("/api/proofread-text", async (req, res) => {
+    const { text, style, tone } = req.body;
+
+    let content;
+    if (style !== 'n/a' && tone !== 'n/a') {
+        content = `Proofread this text: '${text}.' Make sure the style is ${style} and tone is ${tone}.`;
+    }
+    else if (style === 'n/a' && tone === 'n/a') {
+        content = `Proofread this text: '${text}'.`;
+    }
+    else if (style === 'n/a') {
+        content = `Proofread this text: '${text}.' Make sure the tone is ${tone}.`;
+    }
+    else {
+        content = `Proofread this text: '${text}.' Make sure the style is ${style}.`;
+    }
+
+    try {
+        const openaiResponse = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: 'user', content: content + ' Below the result, list out all the changes you made. If the text does not make sense to proofread, respond saying that it does not make sense to proofread. If the text looks correct, respond accordingly.' }]
+        });
+
+        const proofreadText = openaiResponse.data.choices[0].message.content.trim();
+
+        res.status(200).json({ success: true, proofreadText: proofreadText });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Failed to proofread text." });
+    }
 });
 
 
@@ -181,13 +211,11 @@ app.post("/api/send-email", async (req, res) => {
 
         res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error.response.body);
         res.status(500).json({ success: false, message: "Email sending failed." });
     }
 });
 
 app.post("/api/generate-day-itinerary", async (req, res) => {
-    console.log("here i am")
     const { events, date } = req.body;
 
     try {

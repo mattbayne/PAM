@@ -108,8 +108,9 @@ function ResponsiveAppBar() {
                         </NavLink>
                     </Box>
                     <Typography
-                        variant="h5"
+                        variant="h1"
                         noWrap
+                        fontSize="45px"
                         sx={{
                             flexGrow: 1,
                             display: { xs: 'none', md: 'flex' },
@@ -186,27 +187,27 @@ function ResponsiveAppBar() {
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                                     {setting === "Login" && (
-                                        <NavLink to="/login">
+                                        <NavLink to="/login" style={{color: '#076efd'}}>
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
                                     {setting === "Signup" && (
-                                        <NavLink to="/signup">
+                                        <NavLink to="/signup" style={{color: '#076efd'}}>
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
                                     {setting === "Logout" && (
-                                        <NavLink to="/logout">
+                                        <NavLink to="/logout" style={{color: '#076efd'}}>
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
                                     {setting === "Account" && (
-                                        <NavLink to="/account">
+                                        <NavLink to="/account" style={{color: '#076efd'}}>
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
                                     {setting === "Dashboard" && (
-                                        <NavLink to="/">
+                                        <NavLink to="/" style={{color: '#076efd'}} >
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}

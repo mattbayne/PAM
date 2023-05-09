@@ -38,10 +38,6 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
     doCreateUserWithEmailAndPassword(data.get('email'), data.get('password'), data.get('displayName'))
   };
 
@@ -64,7 +60,7 @@ export default function SignUp() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h2" fontSize="30px">
             Sign up
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>

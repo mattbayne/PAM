@@ -54,7 +54,6 @@ const GenerateEmails = () => {
         setError('');
         try {
             const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose, recipientName: name, displayName });
-            console.log(emailContent);
             setResponse(emailContent);
         } catch (error) {
             setError('Failed to generate email.');
@@ -76,7 +75,6 @@ const GenerateEmails = () => {
             const [subject, ...bodyLines] = arr;
             const body = bodyLines.join('\n');
 
-            // console.log('body', body);
 
             await axios.post('http://localhost:3001/api/send-email', { email, subject, body});
             alert('Email sent!');
@@ -104,8 +102,8 @@ const GenerateEmails = () => {
                     justifyContent: 'flex-start',
                 }}
             >
-                <Typography variant="h4" mb={4}>
-                    What email would you like to send?
+                <Typography variant="h2" mb={4} fontSize="30px">
+                    Fill out the Fields Below to Generate Your Email
                 </Typography>
                 <Box component="form" width={1}>
                     <TextField
