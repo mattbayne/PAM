@@ -6,7 +6,6 @@ const ConvertHtmlToPdf = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
-    console.log("Submitting form...");
     event.preventDefault();
 
     if (!html) return;

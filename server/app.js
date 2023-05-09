@@ -8,7 +8,6 @@ const sgMail = require("@sendgrid/mail");
 const {OpenAIApi, Configuration} = require("openai");
 const wkhtmltopdf = require("wkhtmltopdf");
 const {getUserProfile, createUserProfile, updateUserProfilePicture} = require("./data/mongo");
-const axios = require("axios");
 const {getTokens, cacheTokens} = require("./data/redis/Redis");
 const {itineraryDirective} = require("./itinerary");
 const fs = require("fs");
@@ -68,8 +67,6 @@ app.post("/api/proofread-text", async (req, res) => {
         content = `Proofread this text: '${text}.' Make sure the style is ${style}.`;
     }
 
-    console.log(content);
-
     try {
         const openaiResponse = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
@@ -77,8 +74,6 @@ app.post("/api/proofread-text", async (req, res) => {
         });
 
         const proofreadText = openaiResponse.data.choices[0].message.content.trim();
-
-        console.log(proofreadText);
 
         res.status(200).json({ success: true, proofreadText: proofreadText });
     } catch (error) {
@@ -216,7 +211,6 @@ app.post("/api/send-email", async (req, res) => {
 
         res.status(200).json({ success: true });
     } catch (error) {
-        console.log(error.response.body);
         res.status(500).json({ success: false, message: "Email sending failed." });
     }
 });

@@ -42,7 +42,6 @@ const Itinerary = () => {
         setError('');
         try {
             const {data: {itineraryContent}} = await axios.post('http://localhost:3001/api/generate-day-itinerary', { events, date });
-            console.log(itineraryContent);
             setResponse(itineraryContent);
         } catch (error) {
             setError('Failed to generate itinerary.');
@@ -273,9 +272,7 @@ export const ItineraryButton = () => {
         async function checkExists() {
             try {
                 const url = `http://localhost:3001/api/get-itinerary-file`
-                console.log(`req email: `, url)
                 const res = await axios.get(url, {params: {email: email}},)
-                console.log(res)
                 setFileName(res['data']['fileName'])
                 setCompleted(true)
             } catch (e) {
@@ -297,7 +294,6 @@ export const ItineraryButton = () => {
                         name: displayName,
                     }
                 );
-                console.log(res)
                 setFileName(res['data']['path'])
                 setGenerating(false)
                 setCompleted(true)

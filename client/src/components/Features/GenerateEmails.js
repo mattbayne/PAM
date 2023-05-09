@@ -54,7 +54,6 @@ const GenerateEmails = () => {
         setError('');
         try {
             const {data: {emailContent}} = await axios.post('http://localhost:3001/api/generate-email', { purpose, recipientName: name, displayName });
-            console.log(emailContent);
             setResponse(emailContent);
         } catch (error) {
             setError('Failed to generate email.');
@@ -76,7 +75,6 @@ const GenerateEmails = () => {
             const [subject, ...bodyLines] = arr;
             const body = bodyLines.join('\n');
 
-            // console.log('body', body);
 
             await axios.post('http://localhost:3001/api/send-email', { email, subject, body});
             alert('Email sent!');

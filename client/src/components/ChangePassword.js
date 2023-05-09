@@ -17,7 +17,7 @@ import {AuthContext} from "../firebase/Auth";
 //     );
 // }
 
-function ChangePassword(props) {
+function ChangePassword() {
     const [open, setOpen] = useState(false);
     const [currPass, setCurrPass] = useState('');
     const [pass1, setPass1] = useState('');
@@ -54,7 +54,6 @@ function ChangePassword(props) {
         try {
             await validateCurrentPassword()
         } catch(e) {
-            console.log(e)
             setCurrPass("")
             setError("Current password is incorrect, please try again.");
             return
@@ -71,7 +70,6 @@ function ChangePassword(props) {
             await doChangePassword(currentUser.email, currPass, pass1)
         } catch (e) {
             setError(e)
-            console.log(e)
             return
         }
         alert("successfully changed password")

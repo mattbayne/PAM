@@ -115,7 +115,6 @@ function AccountCard() {
                 const rawResult = await axios.get(`http://localhost:3001/user/${email}`)
                 setData(rawResult['data'])
             } catch(e) {
-                console.log(`failed to get data: `, e)
                 setData(defaultData)
             } finally {
                 setLoading(false)

@@ -6,12 +6,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import {
-    Dialog,
     Grid,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     FormControl,
     FormControlLabel,
     FormLabel,
@@ -49,7 +44,6 @@ const EditDocs = () => {
         setError('');
         try {
             const {data: {proofreadText}} = await axios.post('http://localhost:3001/api/proofread-text', { text, style, tone });
-            console.log(proofreadText);
             setResponse(proofreadText);
         } catch (error) {
             setError('Failed to proofread text.');
