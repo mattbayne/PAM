@@ -19,6 +19,7 @@ import Itinerary from "../Features/Itinerary";
 import EditDocs from "../Features/EditDocs";
 import ConvertHtmlToPdf from "../wkhtmltopdf";
 import Tooltip from "@mui/material/Tooltip";
+import Home from "./Home";
 
 
 
@@ -121,6 +122,7 @@ function DashboardContent() {
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          {selectedFunctionality === '' && <Home/>}
           {selectedFunctionality === 'generateEmails' && <GenerateEmails />}
           {selectedFunctionality === 'calendar' && <Calendar />}
           {selectedFunctionality === 'itinerary' && <Itinerary />}
