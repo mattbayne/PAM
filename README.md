@@ -35,8 +35,6 @@ Go to the project directory
   cd PAM
 ```
 
----
-
 ## Running the Server
 
 Go to the server directory
@@ -56,7 +54,7 @@ Start the Server
 ```bash
   npm start
 ```
-
+---
 
 ## Running the Client
 
