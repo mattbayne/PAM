@@ -207,6 +207,10 @@ function Calendar() {
     };
 
     const handleAddEvent = async () => {
+        if (!event.summary || !event.location || !event.start.dateTime || !event.end.dateTime || !event.description) {
+            alert('Please fill out all the fields!');
+            return;
+        }
         try {
             const formattedEvent = {
                 summary: event.summary,
@@ -241,7 +245,7 @@ function Calendar() {
                 setEvent(eventData);
                 setEvents([...events, eventData])
                 alert('Event added successfully!');
-                //setOpen(false);
+                setOpen(false);
             } else {
                 alert('Error adding event!');
             }
@@ -270,9 +274,6 @@ function Calendar() {
             },
         }));
     };
-
-
-
 
     return (
         <div>
@@ -314,20 +315,26 @@ function Calendar() {
                             value={event.location}
                             onChange={handleInputChange}
                         />
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker
-                                label="Start Date and Time"
-                                inputFormat="yyyy-MM-dd hh:mm a"
-                                value={event.start.dateTime}
-                                onChange={(newValue) => handleDateTimeChange(newValue, "start")}
-                            />
-                            <DateTimePicker
-                                label="End Date and Time"
-                                inputFormat="yyyy-MM-dd hh:mm a"
-                                value={event.end.dateTime}
-                                onChange={(newValue) => handleDateTimeChange(newValue, "end")}
-                            />
-                        </LocalizationProvider>
+                        <Box marginBottom={2} />
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    label="Start Date and Time"
+                                    inputFormat="yyyy-MM-dd hh:mm a"
+                                    value={event.start.dateTime}
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "start")}
+                                    sx={{width: '48%'}}
+                                />
+                                <Box sx={{width: '4%'}} />
+                                <DateTimePicker
+                                    label="End Date and Time"
+                                    inputFormat="yyyy-MM-dd hh:mm a"
+                                    value={event.end.dateTime}
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "end")}
+                                    sx={{width: '48%'}}
+                                />
+                            </LocalizationProvider>
+                        </Box>
                         <TextField
                             margin="dense"
                             name="description"
