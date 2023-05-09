@@ -8,7 +8,7 @@ import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
 import { LocalizationProvider, DateTimePicker} from '@mui/x-date-pickers';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import {Dialog, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import TextField from "@mui/material/TextField";
 
 function Calendar() {
@@ -207,7 +207,6 @@ function Calendar() {
     };
 
     const handleAddEvent = async () => {
-        console.log('event', event);
         try {
             const formattedEvent = {
                 summary: event.summary,
@@ -222,14 +221,10 @@ function Calendar() {
                 },
                 description: event.description
             };
-            console.log(formattedEvent)
             const newEvent = await axios.post(`http://localhost:3001/calendarAuth/event/${email}`, formattedEvent);
             const response = newEvent.data
-            console.log('newEvent', response);
-            console.log('data', response['data'])
             if (response['data']['auth']) {
-                setOpen(false);
-                setEvent({
+                const eventData = {
                     summary: event.summary,
                     location: event.location,
                     start: {
@@ -241,7 +236,10 @@ function Calendar() {
                         timeZone: 'America/New_York'
                     },
                     description: event.description
-                });
+                }
+                setOpen(false);
+                setEvent(eventData);
+                setEvents([...events, eventData])
                 alert('Event added successfully!');
                 //setOpen(false);
             } else {
@@ -367,8 +365,8 @@ function Calendar() {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {dayEvents[day].map((event) => (
-                                        <tr>
+                                    {dayEvents[day].map((event, i) => (
+                                        <tr key={`${day}:${i}`}>
                                             <td className="center">{event.summary}</td>
                                             <td className="center">
                                                 {event.start && event.start.dateTime ? (

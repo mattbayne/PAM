@@ -18,6 +18,8 @@ const Itinerary = () => {
     const [error, setError] = useState('');
     const [open, setOpen] = useState(false);
 
+    console.log(events)
+
     const resetForm = () => {
         setEvents('');
         setDate('');
