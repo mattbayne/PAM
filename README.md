@@ -39,6 +39,7 @@ Go to the project directory
 
 ## Running the Server
 
+Go to the server directory
 
 ```bash
   cd /server
@@ -58,6 +59,12 @@ Start the Server
 
 
 ## Running the Client
+
+Go to the client directory
+
+```bash
+  cd /client
+```
 
 Install Dependencies
 
