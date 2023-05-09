@@ -8,26 +8,20 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import logo from '../img/logo.jpeg'
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import {AuthContext} from "../firebase/Auth";
 import { NavLink } from 'react-router-dom';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import axios from "axios";
 import noUser from '../img/noUser.webp'
 import { useNavigate } from 'react-router-dom';
 import DashboardContext from "./Dashboard/DashboardContext";
 
 
 
-const pages = ['Products', 'Pricing', 'Blog'];
-
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const { setSelectedFunctionality } = useContext(DashboardContext);
 
@@ -38,15 +32,8 @@ function ResponsiveAppBar() {
         ? ["Account", "Dashboard", "Logout"]
         : ["Login", "Signup"];
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {

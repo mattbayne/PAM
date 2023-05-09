@@ -292,7 +292,7 @@ app.get('/events/', async (req, res) => {
         // Authorize the user with Google OAuth2
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            scope: ['https://www.googleapis.com/auth/calendar'],
             state: JSON.stringify({ redirectUrl: '/events', testState: 'nicholai@gmail.com'}),
             redirect_uri: 'http://localhost:3001/oauth2callback'
         });
@@ -323,11 +323,33 @@ async function getEvents(tokens) {
     return events.data.items
 }
 
+async function postEvent(tokens, event) {
+    oauth2Client.setCredentials(tokens);
+    console.log(event)
+    // Create the new event
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const response = await calendar.events.insert({
+        calendarId: 'primary',
+        resource: event
+    });
+
+    console.log(response)
+
+    return response.data;
+}
+
+
 
 async function getUserEvents(email) {
     const tokens = await getTokens(email);
     // validate tokens here
     return await getEvents(tokens)
+}
+
+async function postUserEvents(email, event) {
+    const tokens = await getTokens(email);
+    // validate tokens here
+    return await postEvent(tokens, event)
 }
 
 
@@ -343,6 +365,37 @@ async function getUserTokens(req, res, next) {
     }
 }
 
+async function verifyUserTokens(email, event) {
+    try {
+        const status = await postUserEvents(email, event);
+        return{
+            'auth': true,
+            'status': status
+        }
+    }catch (e) {
+        console.log(e);
+        throw new Error("Failed to verify user tokens");
+    }
+}
+
+
+app.post('/calendarAuth/event/:email',  async (req, res) => {
+    const {email} = req.params
+    const event = req.body;
+
+    try {
+        // Authorize the user with Google OAuth2
+        const response = await verifyUserTokens(email, event)
+        res.json({
+            'auth': true,
+            'data': response
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
     const { email } = req.params
@@ -350,7 +403,7 @@ app.get('/calendarAuth/:email', [getUserTokens, async (req, res) => {
         // Authorize the user with Google OAuth2
         const authUrl = oauth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: ['https://www.googleapis.com/auth/calendar.readonly'],
+            scope: ['https://www.googleapis.com/auth/calendar'],
             state: JSON.stringify({ redirectUrl: '/events', email: email}),
             redirect_uri: 'http://localhost:3001/oauth2callback'
         })

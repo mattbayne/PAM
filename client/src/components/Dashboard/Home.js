@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Box, List, ListItem, ListItemText, Container, Paper } from '@mui/material';
+import { Typography, Box, List, ListItem, ListItemText, Container} from '@mui/material';
 import styled from '@emotion/styled';
 
 const AnimatedTitle = styled(Typography)`
@@ -10,13 +10,13 @@ const AnimatedTitle = styled(Typography)`
 
   @keyframes gradient {
     0% {
-      background-position: 0% 50%;
+      background-position: 0 50%;
     }
     50% {
       background-position: 100% 50%;
     }
     100% {
-      background-position: 0% 50%;
+      background-position: 0 50%;
     }
   }
 `;
