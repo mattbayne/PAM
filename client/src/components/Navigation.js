@@ -19,6 +19,7 @@ import { NavLink } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import axios from "axios";
 import noUser from '../img/noUser.webp'
+import DashboardContext from "./Dashboard/DashboardContext";
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -26,7 +27,7 @@ const pages = ['Products', 'Pricing', 'Blog'];
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
-    // const [avatar, setAvatar] = useState(null)
+    const { setSelectedFunctionality } = useContext(DashboardContext);
 
     const { currentUser, avatar } = useContext(AuthContext);
     const settings = currentUser
@@ -39,6 +40,8 @@ function ResponsiveAppBar() {
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
+
+
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
@@ -54,7 +57,7 @@ function ResponsiveAppBar() {
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 0, width: '150px', height: '150px', display: { xs: 'none', md: 'flex' }, mr: 1 }}>
                         <NavLink to="/">
-                            <img src={logo} alt='logo' style={{ maxWidth: '100%', maxHeight: '100%' }} draggable="false" />
+                            <img src={logo} alt='logo' style={{ maxWidth: '100%', maxHeight: '100%' }} draggable="false" onClick={() => setSelectedFunctionality('home')} />
                         </NavLink>
                     </Box>
                     <Typography
@@ -74,7 +77,7 @@ function ResponsiveAppBar() {
                     >
                         Personalized Assistant & Manager
                     </Typography>
-                    <NavLink to='/' style={{color: 'inherit'}}>
+                    <NavLink to='/' style={{color: 'inherit'}} onClick={() => setSelectedFunctionality('home')}>
                         <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
                     </NavLink>
                     <Typography
@@ -92,6 +95,7 @@ function ResponsiveAppBar() {
                             color: 'inherit',
                             textDecoration: 'none',
                         }}
+                        onClick={() => setSelectedFunctionality('home')}
                     >
                         PAM
                     </Typography>
@@ -157,7 +161,7 @@ function ResponsiveAppBar() {
                                         </NavLink>
                                     )}
                                     {setting === "Dashboard" && (
-                                        <NavLink to="/" style={{color: '#076efd'}} >
+                                        <NavLink to="/" style={{color: '#076efd'}} onClick={() => setSelectedFunctionality('home')} >
                                             <Typography textAlign="center">{setting}</Typography>
                                         </NavLink>
                                     )}
